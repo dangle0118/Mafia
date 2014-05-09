@@ -1,6 +1,6 @@
 require.config({
   baseUrl: "http://localhost:8080/js",
-  packages: [],
+  packages: ["dashboard"],
   shim: {
     "angular": {
       exports: "angular"
@@ -20,7 +20,8 @@ require.config({
     "btford.socket-io": "../bower_components/angular-socket-io/socket",
     "socket.io": "lib/socket.io",
     "ui-router": "../bower_components/angular-ui-router/release/angular-ui-router",
-    "ui-bootstrap": "../bower_components/angular-bootstrap/ui-bootstrap-tpls" 
+    "ui-bootstrap": "../bower_components/angular-bootstrap/ui-bootstrap-tpls",
+    "text": "lib/require/text" 
   },
   modules: [
   {
