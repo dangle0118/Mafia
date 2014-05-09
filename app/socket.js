@@ -1,4 +1,4 @@
-module.exports = function(io) {
+module.exports = function(io, mongoose) {
 
   io.sockets.on('connection', onConnection);
 

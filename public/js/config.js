@@ -1,6 +1,6 @@
 require.config({
   baseUrl: "http://localhost:8080/js",
-  packages: [],
+  packages: ["dashboard"],
   shim: {
     "angular": {
       exports: "angular"

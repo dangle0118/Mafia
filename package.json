@@ -8,6 +8,7 @@
     "morgan": "~1.0.0",
     "method-override": "~1.0.0",
     "errorhandler": "~1.0.0",
-    "html": "~0.0.7"
+    "html": "~0.0.7",
+    "mongoose": "~3.6.2"
   }
 }
