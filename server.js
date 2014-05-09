@@ -16,7 +16,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.get('/', routes.index);
 app.get('*', routes.index);
 
-//require('./app/socket')(io);
+require('./app/socket')(io);
 
 server.listen(app.get('port'), function () {
   console.log('Express server listenning on port ' + app.get('port'));
