@@ -2,53 +2,16 @@ define(["angular", "btford.socket-io"], function (angular) {
   "use strict";
 
   return angular.module("utils.services", ["btford.socket-io"])
-    .filter("toArray", function () {
-      return function (obj) {
-        if (!(obj instanceof Object)) {
-          return obj;
-        }
-        return Object.keys(obj).filter(function(key){if(key.charAt(0) !== "$") {return key;}}).map(function (key) {
-          return Object.defineProperty(obj[key], "$key", {__proto__: null, value: key});
-        });
-      };
-    })
-    .filter("pickOrderBy", function () {
-      return function (input, order, king) {
-        for (var i = 0, ii = order.length, preKing = [], postKing = []; i < ii; i++) {
-          var name = order[i].nickname;
-          if (name == king || postKing.length > 0) {
-            for (var j = 0, jj = input.length; j < jj; j++) {
-              if (input[j].nickname == name) {
-                postKing.push(input[j]);
-                break;
-              }
-            }
-          }
-          else {
-            for (var j = 0, jj = input.length; j < jj; j++) {
-              if (input[j].nickname == name) {
-                preKing.push(input[j]);
-                break;
-              }
-            }
-          }
-        }
-        return postKing.concat(preKing);
-      };
-    })
+    
     .factory("socket", ["socketFactory", function (socketFactory) {
       return socketFactory({
         ioSocket: io.connect("http://localhost", {port: 8080, transports: ["websocket"]})
       });
     }])
-    .factory("appFactory", function () {
+    .factory("userProfile", function () {
       return  {
-        socketConnected: false,
-        player: {
-          nickname: ""
-        },
-        remotePlayers: {},
-        remoteRooms: {}
+        userName:"",
+        userID: ""
       };
     })
     .factory("gameFactory", ["$filter", function ($filter) {

@@ -1,5 +1,5 @@
 module.exports = function(io, mongoose) {
-
+  
   io.sockets.on('connection', onConnection);
 
   function onConnection(client) {
@@ -10,7 +10,7 @@ module.exports = function(io, mongoose) {
 
     function onNewPlayer(data) {
       console.log('new player: ' + client.id);
-      client.emit('new player', {status: 'success', username: data.username});
+      client.emit('new player', {status: 'success', username: data.username, id: client.id});
       
     }
 

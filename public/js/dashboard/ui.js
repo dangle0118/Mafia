@@ -1,5 +1,7 @@
-define(["text!html/dashboard/dashboard.html",
-  "angular","ui-router"], function (dashboardTpl, angular) {
+define(["text!html/dashboard/waitingroom.html",
+  "text!html/dashboard/dashboard.html",
+  "text!html/dashboard/header.html",
+  "angular","ui-router"], function (waitingRoomTpl, dashboardTpl, headerTpl, angular) {
   "use strict";
 
   return angular.module("dashboard.ui", ["ui.router"])
@@ -10,11 +12,25 @@ define(["text!html/dashboard/dashboard.html",
             url: "/dashboard",
             views: {
               "root1": {
-                template: dashboardTpl
-                
+                template: headerTpl                                
+              },
+              "root2": {
+                template: dashboardTpl,
+                controller: "DashboardCtrl"
               }
+
             }
 
+          })
+          .state("dashboard.waitingRoom". {
+            url: "/waitingroom",
+            views: {
+              "root2": {
+                template: waitingRoomTpl
+
+              }
+
+            }
           })
 
       }])
