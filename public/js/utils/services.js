@@ -14,6 +14,19 @@ define(["angular", "btford.socket-io"], function (angular) {
         userID: ""
       };
     })
+    .factory("gameProfile", function () {
+      return {
+        init: function (data) {
+          angular.extend(this, {
+            roomName: data.roomName,
+            gameID: data.gameID,
+            gameCap: data.gameCap,
+            currentPlayers: data.currentPlayers,
+            gameRoles: data.gameRoles
+          });
+        }
+      };
+    })
     .factory("gameFactory", ["$filter", function ($filter) {
       return {
         init: function () {

@@ -9,7 +9,7 @@ var app = module.exports = express();
 var server = require('http').createServer(app);
 var io = require('socket.io').listen(server);
 
-mongoose.connect('mongodb://localhost/TodoList');
+mongoose.connect('mongodb://localhost/Mafia');
 
 
 app.set('port', process.env.PORT || 8080);

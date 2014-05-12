@@ -17,12 +17,10 @@ define(["text!html/dashboard/waitingroom.html",
               "root2": {
                 template: dashboardTpl,
                 controller: "DashboardCtrl"
-              }
-
+              }            
             }
-
           })
-          .state("dashboard.waitingRoom". {
+          .state("waitingRoom", {
             url: "/waitingroom",
             views: {
               "root2": {

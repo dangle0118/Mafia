@@ -17,32 +17,31 @@ define(["text!html/login.html", "angular", "ui-router"], function (loginHtml, an
           })
       }])
 
-    .run(["$rootScope", "$state", "$stateParams", "socket",
+    .run(["$rootScope", "$state", "$stateParams", "socket", 
       function ($rootScope, $state, $stateParams, socket) {
         $rootScope.$state = $state;
         $rootScope.$stateParams = $stateParams;       
     }])
 
-    .controller("LoginCtrl", ["$scope", "socket",
-      function($scope, socket) {
-        $scope.username = "";
+    .controller("LoginCtrl", ["$scope", "socket", "userProfile",
+      function($scope, socket, userProfile) {
+        $scope.userName = "";
  
         socket.forward("new player", $scope);
         $scope.$on("socket:new player", onNewPlayer);
         function onNewPlayer (ev, data) {
           if (data.status === "success") {
-            //TODO: save user name
-            //$scope.$state.go("dashboard");           
-            console.log(data);
+            userProfile.userName = data.userName;
+            userProfile.userID = data.id;            
             $scope.$state.go("dashboard");
           } else {
-            $scope.username = "";
+            $scope.userName = "";
           }
         }
 
         $scope.createPlayer = function () {
-          socket.emit("new player",{username: $scope.username});
-          console.log('we here')
+          socket.emit("new player",{username: $scope.userName});
+          
         };
       }]);
 });
