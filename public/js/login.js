@@ -31,8 +31,9 @@ define(["text!html/login.html", "angular", "ui-router"], function (loginHtml, an
         $scope.$on("socket:new player", onNewPlayer);
         function onNewPlayer (ev, data) {
           if (data.status === "success") {
+            console.log(data);
             userProfile.userName = data.userName;
-            userProfile.userID = data.id;            
+            userProfile.userID = data.id; 
             $scope.$state.go("dashboard");
           } else {
             $scope.userName = "";
@@ -40,7 +41,7 @@ define(["text!html/login.html", "angular", "ui-router"], function (loginHtml, an
         }
 
         $scope.createPlayer = function () {
-          socket.emit("new player",{username: $scope.userName});
+          socket.emit("new player",{userName: $scope.userName});
           
         };
       }]);

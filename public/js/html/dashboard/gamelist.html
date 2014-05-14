@@ -1,1 +1,12 @@
-game list
+<h1>game list</h1>
+
+<form ng-submit="joinGame()">
+<div class="" style="margin-top:10px" ng-repeat="game in roomList" >
+	<label  >
+		<input type="radio" name="room" value="{{game.gameID}}" ng-model="$parent.gameChoose"></input> {{game.roomName}}, {{game.gameCap}},  
+	</label><br/>
+</div>
+
+
+<button type="submit">Join Game</button>
+</form>

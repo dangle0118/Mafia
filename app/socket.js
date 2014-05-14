@@ -8,6 +8,8 @@ module.exports = function(io, mongoose) {
   	currentPlayers: Array,
   	gameRoles: Array
   });
+
+
   
   io.sockets.on('connection', onConnection);
 
@@ -20,7 +22,10 @@ module.exports = function(io, mongoose) {
 
 
     function onNewPlayer(data) {
-      User.find({'userName': data.userName}, function (err, user) {
+      console.log(data);
+      console.log(data.userName);
+      User.find({userName: data.userName}, function (err, user) {
+        console.log(user);
       	if (user.length !== 0 ) {
 					  client.emit('new player', {status: 'error', msg: 'username existed'});      
       	} else {
@@ -30,29 +35,52 @@ module.exports = function(io, mongoose) {
       				if (err) {
       					client.emit('new player', { status: 'error', msg: 'cannot create'});
       				} else {
-      					client.emit('new player', {status: 'success', username: user.userName, id: user._id});      
+      					client.emit('new player', {status: 'success', userName: user.userName, id: user._id});      
       				}
       			})
       	}
       });
     }
 	
-		function onCreateGame(data) {
-			console.log('new game:' + client.id);
-			roomID = roomID + 1;
-			client.emit('create game', {status: 'success', roomName: data.roomName,
-																		gameID: roomID, gameCap: data.gameCap,
-																		currentPlayers: [client.id], 
-																		gameRoles: data.gameChar });		
+		function onCreateGame(data) {		
+      Game.create({
+        roomName : data.roomName,
+        gameCap: data.gameCap,
+        currentPlayers: [data.userName],
+        gameRoles: [data.gameChar]
+      }, function (err, game) {
+          if (err) {
+            client.emit('create game', {status:'error', msg: 'cannot create game'});
+          } else {
+            client.emit('create game', {status: 'success', roomName: game.roomName,
+                                    gameID: game._id, gameCap: game.gameCap,
+                                    currentPlayers: game.currentPlayers, 
+                                    gameRoles: game.gameRoles });
+          };
+      });
+		
 		}    
 
     function onGetList(data) {
-      
+      Game.find({}, function (err, game) {
+        if (err) {
+          client.emit('get list', {status: 'error', msg: 'cannot get list'});
+        } else {
+          var result = {};
+          game.forEach(function (gameRoom) {
+            result[gameRoom.roomName] = {
+              roomName: gameRoom.roomName,
+              gameID: gameRoom._id,
+              gameCap: gameRoom.gameCap,
+              currentPlayers: gameRoom.currentPlayers
+            }
+          });
+          client.emit('get list', {status: 'success', data: result});
+        };
+      });      
     }
-
-
+  
 
   }
-
 
 }
