@@ -12,6 +12,7 @@ define(["angular"], function (angular) {
         }
 
         $scope.createGame = function () {
+          //TODO: check validation
           if (checkValidInfo()) {
           	
             socket.emit("create game", $scope.game);
@@ -29,9 +30,33 @@ define(["angular"], function (angular) {
           }
         }
 
+    }])
+
+    .controller("gameListCtrl",["$scope", "socket", 
+      function ($scope, socket) {
+        socket.emit("get list");
+        socket.forward("get list", $scope);
+        socket.$on("socket:get list", onGetList);
+        function onGetList(ev, data) {
+          
 
 
+        }
 
 
-      }])
+        socket.forward("add game", $scope);
+        $scope.$on("socket:add game", onAddGame);
+        function onAddGame(ev, data) {
+          console.log('add');
+        }
+
+        socket.forward("remove game", $scope);
+        $scope.$on("socket:remove game", onAddGame);
+        function onAddGame(ev, data) {
+          console.log('remove');
+        }
+
+
+    }])
+
 })

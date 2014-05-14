@@ -16,6 +16,7 @@ module.exports = function(io, mongoose) {
 
     client.on('new player', onNewPlayer);
     client.on('create game', onCreateGame);
+    client.on('get list', onGetList);
 
 
     function onNewPlayer(data) {
@@ -45,6 +46,9 @@ module.exports = function(io, mongoose) {
 																		gameRoles: data.gameChar });		
 		}    
 
+    function onGetList(data) {
+      
+    }
 
 
 

@@ -1,7 +1,8 @@
-define(["text!html/dashboard/waitingroom.html",
+define(["text!html/dashboard/gamelist.html",
+  "text!html/dashboard/waitingroom.html",
   "text!html/dashboard/dashboard.html",
   "text!html/dashboard/header.html",
-  "angular","ui-router"], function (waitingRoomTpl, dashboardTpl, headerTpl, angular) {
+  "angular","ui-router"], function (gameListTpl, waitingRoomTpl, dashboardTpl, headerTpl, angular) {
   "use strict";
 
   return angular.module("dashboard.ui", ["ui.router"])
@@ -17,6 +18,10 @@ define(["text!html/dashboard/waitingroom.html",
               "root2": {
                 template: dashboardTpl,
                 controller: "DashboardCtrl"
+              },
+              "root3": {
+                template: gameListTpl,
+                controller: "gameListCtrl"
               }            
             }
           })
