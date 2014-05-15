@@ -20,6 +20,7 @@ module.exports = function(io, mongoose) {
     client.on('create game', onCreateGame);
     client.on('get list', onGetList);
     client.on('join game', onJoinGame);
+    
 
 
     function onNewPlayer(data) {
@@ -56,7 +57,10 @@ module.exports = function(io, mongoose) {
             client.emit('create game', {status: 'success', roomName: game.roomName,
                                     gameID: game._id, gameCap: game.gameCap,
                                     currentPlayers: game.currentPlayers, 
-                                    gameRoles: game.gameRoles });
+                                    gameRoles: game.gameRoles, 
+                                    isCreator: 1 });
+            console.log(game._id);
+            client.join(game._id);
           };
       });
 		
@@ -82,24 +86,37 @@ module.exports = function(io, mongoose) {
     }
 
     function onJoinGame(data) {
-      Game.find({_id: data.gameID}, function (err, game) {
+      Game.find({_id: data.gameID}, function (err, gameInfo) {
         if (err) {
           client.emit('join game', {status: 'error', msg: 'cannot join game'});
-        } else {
-          if (game.currentPlayers.length < game.gameCap) {
-            game.currentPlayers.push(data.userName);            
-            client.emit('join game', {status: 'success', data: game});
-            game.save();
+        } else {          
+          var game = gameInfo[0];
+         
+          if (game.currentPlayers.length < game.gameCap) {            
+            
+            game.currentPlayers.push(data.userName);
+            var result = game.toObject();
+            result.gameID = game._id; 
+            result.isCreator = 0;
+            delete result._id;                
+            client.emit('join game', {status: 'success', data: result});
+            console.log(game._id);
+            client.join(game._id);
+            client.broadcast.to(game._id).emit('player join', {userName: data.userName});
+
+            io.sockets.clients(game._id);
+            game.save();            
+            
           } else {
             client.emit('join game', {status: 'fail', msg: "Room is fulled"});
           };
-
+      
         };
 
       });
-
     }
-  
+
+
 
   }
 

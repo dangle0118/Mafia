@@ -1,36 +1,36 @@
-define(["text!html/dashboard/gamelist.html",
-  "text!html/dashboard/waitingroom.html",
-  "text!html/dashboard/dashboard.html",
-  "text!html/dashboard/header.html",
-  "angular","ui-router"], function (gameListTpl, waitingRoomTpl, dashboardTpl, headerTpl, angular) {
-  "use strict";
+define(['text!html/dashboard/gamelist.html',
+  'text!html/dashboard/waitingroom.html',
+  'text!html/dashboard/dashboard.html',
+  'text!html/dashboard/header.html',
+  'angular','ui-router'], function (gameListTpl, waitingRoomTpl, dashboardTpl, headerTpl, angular) {
+  'use strict';
 
-  return angular.module("dashboard.ui", ["ui.router"])
-    .config(["$stateProvider", "$urlRouterProvider", 
+  return angular.module('dashboard.ui', ['ui.router'])
+    .config(['$stateProvider', '$urlRouterProvider', 
       function ($stateProvider, $urlRouterProvider) {
         $stateProvider
-          .state("dashboard", {
-            url: "/dashboard",
+          .state('dashboard', {
+            url: '/dashboard',
             views: {
-              "root1": {
+              'root1': {
                 template: headerTpl                                
               },
-              "root2": {
+              'root2': {
                 template: dashboardTpl,
-                controller: "DashboardCtrl"
+                controller: 'DashboardCtrl'
               },
-              "root3": {
+              'root3': {
                 template: gameListTpl,
-                controller: "gameListCtrl"
+                controller: 'GameListCtrl'
               }            
             }
           })
-          .state("waitingRoom", {
-            url: "/waitingroom",
+          .state('waitingRoom', {
+            url: '/waitingroom',
             views: {
-              "root2": {
-                template: waitingRoomTpl
-
+              'root2': {
+                template: waitingRoomTpl,
+                controller: 'WaitingCtrl'
               }
 
             }

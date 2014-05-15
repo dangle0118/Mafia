@@ -22,8 +22,12 @@ define(["angular", "btford.socket-io"], function (angular) {
             gameID: data.gameID,
             gameCap: data.gameCap,
             currentPlayers: data.currentPlayers,
-            gameRoles: data.gameRoles
+            gameRoles: data.gameRoles,
+            isCreator: data.isCreator
           });
+        },
+        joinPlayer: function (userName) {
+          this.currentPlayers.push(userName);
         }
       };
     })

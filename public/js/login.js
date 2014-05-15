@@ -30,8 +30,7 @@ define(["text!html/login.html", "angular", "ui-router"], function (loginHtml, an
         socket.forward("new player", $scope);
         $scope.$on("socket:new player", onNewPlayer);
         function onNewPlayer (ev, data) {
-          if (data.status === "success") {
-            console.log(data);
+          if (data.status === "success") {         
             userProfile.userName = data.userName;
             userProfile.userID = data.id; 
             $scope.$state.go("dashboard");

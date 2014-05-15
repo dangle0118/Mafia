@@ -30,7 +30,7 @@ define(['angular'], function (angular) {
         }
     }])
 
-    .controller('gameListCtrl',['$scope', 'socket', 'gameProfile', 'userProfile',
+    .controller('GameListCtrl',['$scope', 'socket', 'gameProfile', 'userProfile',
       function ($scope, socket, gameProfile, userProfile) {
         $scope.room = {};
         
@@ -44,12 +44,14 @@ define(['angular'], function (angular) {
         socket.forward('add game', $scope);
         $scope.$on('socket:add game', onAddGame);
         function onAddGame(ev, data) {
+          //TODO: add content
           console.log('add');
         }
 
         socket.forward('remove game', $scope);
         $scope.$on('socket:remove game', onAddGame);
         function onAddGame(ev, data) {
+          //TODO: add content
           console.log('remove');
         }
 
@@ -60,19 +62,85 @@ define(['angular'], function (angular) {
         }
 
         socket.forward('join game', $scope);
-        $scope.$on('socket: join game', onJoinGame);
+        $scope.$on('socket:join game', onJoinGame);
         function onJoinGame(ev, data) {
           if (data.status === 'success'){
             console.log(data);
+            
             gameProfile.init(data.data);
             $scope.$state.go('waitingRoom');            
           } else {
             console.log("cannot join game");
-
           };
-        }
+        }    
+    }])
+    
+    .controller('WaitingCtrl',['$scope','socket','gameProfile','userProfile',
+      function ($scope, socket, gameProfile, userProfile) {        
+        $scope.currentPlayers = gameProfile.currentPlayers;
+        $scope.NumberReady = 1;
+        $scope.isReady = 0;
+        $scope.isCreator = gameProfile.isCreator;
         
+        function isContain(key, arr) {
+          for (var i = 0; i < arr.length; ++i) {           
+            if (arr[i] === key) {
+              console.log('here');
+              return true;
+            }
+          }
+          return false;
+        }
 
+
+        socket.forward('player join', $scope);
+        $scope.$on('socket:player join', onPlayerJoin);
+        function onPlayerJoin(ev, data) {
+          console.log($scope.currentPlayers);                    
+          if (!@isContain(data.userName, $scope.currentPlayers)){
+            gameProfile.joinPlayer(data.userName);
+          }   
+        }
+
+        socket.forward('player leave', $scope);
+        $scope.$on('socket:player leave', onPlayerLeave);
+        function onPlayerLeave(ev, data) {
+          //TODO: implemend removePlayer
+          gameProfile.removePlayer(data.userName);
+        }
+
+        socket.forward('player confirm',$scope);
+        $scope.$on('socket:player confirm', onPlayerConfirm);
+        function onPlayerConfirm(ev, data) {
+          //TODO: implemend
+        }
+
+        socket.forward('start game', $scope);
+        $scope.$on('socket:start game', onStartGame);
+        function onStartGame(ev, data) {
+          //TODO: implemend
+        }
+
+
+
+        $scope.ready = function () {
+          if ($scope.isReady == 1) {
+            $scope.isReady = 0;
+            $scope.NumberReady = $scope.NumberReady - 1;
+            socket.emit('player cancel', {userName: userProfile.userName});
+          } else {
+            $scope.isReady = 1;
+            $scope.NumberReady = $scope.NumberReady + 1;
+            socket.emit('player confirm', {userName: userProfile.userName});         
+          }
+        }
+
+        $scope.start = function () {
+          if (gameProfile.isCreator && ($scope.NumberReady == gameProfile.gameCap)) {
+            socket.emit('start game');
+            //$scope.$state.go('game'); 
+          }
+        }
 
     }])
 
