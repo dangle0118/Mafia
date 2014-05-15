@@ -19,6 +19,7 @@ module.exports = function(io, mongoose) {
     client.on('new player', onNewPlayer);
     client.on('create game', onCreateGame);
     client.on('get list', onGetList);
+    client.on('join game', onJoinGame);
 
 
     function onNewPlayer(data) {
@@ -37,7 +38,7 @@ module.exports = function(io, mongoose) {
       				} else {
       					client.emit('new player', {status: 'success', userName: user.userName, id: user._id});      
       				}
-      			})
+      			});
       	}
       });
     }
@@ -78,6 +79,25 @@ module.exports = function(io, mongoose) {
           client.emit('get list', {status: 'success', data: result});
         };
       });      
+    }
+
+    function onJoinGame(data) {
+      Game.find({_id: data.gameID}, function (err, game) {
+        if (err) {
+          client.emit('join game', {status: 'error', msg: 'cannot join game'});
+        } else {
+          if (game.currentPlayers.length < game.gameCap) {
+            game.currentPlayers.push(data.userName);            
+            client.emit('join game', {status: 'success', data: game});
+            game.save();
+          } else {
+            client.emit('join game', {status: 'fail', msg: "Room is fulled"});
+          };
+
+        };
+
+      });
+
     }
   
 
