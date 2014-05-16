@@ -1,5 +1,5 @@
-require(["angular", "dashboard", "login", "utils/services", "utils/directives", "ui-bootstrap"], function (angular) {
+require(["angular", "dashboard","game", "login", "utils/services", "utils/directives", "ui-bootstrap"], function (angular) {
   "use strict";
 
-  angular.bootstrap(document, ["dashboard", "login", "utils.services", "utils.directives", "ui.bootstrap"]);
+  angular.bootstrap(document, ["dashboard","game", "login", "utils.services", "utils.directives", "ui.bootstrap"]);
 });

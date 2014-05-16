@@ -20,12 +20,12 @@ module.exports = function(io, mongoose) {
     client.on('create game', onCreateGame);
     client.on('get list', onGetList);
     client.on('join game', onJoinGame);
-    
+    client.on('player confirm', onPlayerConfirm);
+    client.on('player cancel', onPlayerCancel );
+    client.on('start game', onStartGame);    
 
 
     function onNewPlayer(data) {
-      console.log(data);
-      console.log(data.userName);
       User.find({userName: data.userName}, function (err, user) {
         console.log(user);
       	if (user.length !== 0 ) {
@@ -37,7 +37,9 @@ module.exports = function(io, mongoose) {
       				if (err) {
       					client.emit('new player', { status: 'error', msg: 'cannot create'});
       				} else {
-      					client.emit('new player', {status: 'success', userName: user.userName, id: user._id});      
+                console.log('new user: ' + data.userName);
+      					client.emit('new player', {status: 'success', userName: user.userName, id: user._id});  
+                client.join(data.userName);    
       				}
       			});
       	}
@@ -116,7 +118,33 @@ module.exports = function(io, mongoose) {
       });
     }
 
+    function onPlayerConfirm(data) {
+      client.broadcast.to(data.gameID).emit('player confirm', {userName: data.userName});
+    }
 
+    function onPlayerCancel(data) {
+      client.broadcast.to(data.gameID).emit('player cancel', {userName: data.userName});      
+    }
+
+    function onStartGame(data) {
+      Game.find({_id: data.gameID }, function (err, game) {
+        if (err) {
+          client.emit('start game', {status: 'error', msg: 'game not exist'});
+        } else {
+          var playerList = game.currentPlayers;
+          var characterList = generateCharacters(game.gameCap, game.gameRoles);
+          for (var i = 0; i < playerList.length; ++i) {
+            client.broadcast.to(playerList[i]).emit('start game', {status: 'success', character: characterList[i]});
+          }
+        }
+
+      });
+    }
+
+    function generateCharacters(gameCap, gameRoles) {
+      console.log(gameRoles);
+
+    }
 
   }
 
