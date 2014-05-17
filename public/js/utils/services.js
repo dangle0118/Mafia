@@ -11,7 +11,8 @@ define(["angular", "btford.socket-io"], function (angular) {
     .factory("userProfile", function () {
       return  {
         userName:"",
-        userID: ""
+        userID: "",
+        userCharacter: ""
       };
     })
     .factory("gameProfile", function () {

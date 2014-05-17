@@ -1,1 +1,16 @@
-gameboard
+<h3>gameboard</h3>
+
+You are {{character}}<br/>
+
+<h4 ng-show='!isNight'>Day {{day}}</h4>
+<h4 ng-show='isNight'>Night {{day}}</h4>
+
+<div class="" style="margin-top:10px" ng-repeat="player in playerList" >
+  <label  >
+    <input type="radio" name="player" value="{{player.userName}}" ng-model="$parent.choosePlayer"></input> 
+      {{player.userName}}
+  </label><br/>
+  <button type="button" ng-click="votePlayer()">
+    Vote
+  </button
+</div>

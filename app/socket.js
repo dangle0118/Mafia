@@ -22,7 +22,10 @@ module.exports = function(io, mongoose) {
     client.on('join game', onJoinGame);
     client.on('player confirm', onPlayerConfirm);
     client.on('player cancel', onPlayerCancel );
-    client.on('start game', onStartGame);    
+    client.on('start game', onStartGame);  
+    client.on('vote player', onVotePlayer);
+    client.on ('kill player', onKillPlayer);
+    client.on('sleep', onSleep); 
 
 
     function onNewPlayer(data) {
@@ -143,8 +146,10 @@ module.exports = function(io, mongoose) {
 
     function generateCharacters(gameCap, gameRoles) {
       console.log(gameRoles);
-
+      return ['village', 'village','police','mafia', 'mafia'];
     }
+
+    
 
   }
 

@@ -12,7 +12,8 @@ define(['text!html/game/gameboard.html'
               'root1': {                                
               },
               'root2': {
-                template: gameBoardTpl
+                template: gameBoardTpl,
+                controller: "GameBoardCtrl"
               }
                           
             }

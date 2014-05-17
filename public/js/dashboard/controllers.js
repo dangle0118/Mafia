@@ -112,13 +112,29 @@ define(['angular'], function (angular) {
         function onPlayerConfirm(ev, data) {
           //TODO: implemend
           $scope.NumberReady = $scope.NumberReady + 1;
+          console.log(data.userName);
+        }
+
+        socket.forward('player cancel',$scope);
+        $scope.$on('socket:player cancel', onPlayerCancel);
+        function onPlayerCancel(ev, data) {
+          //TODO: implemend
+          $scope.NumberReady = $scope.NumberReady - 1;
+          console.log(data.userName);
         }
 
         socket.forward('start game', $scope);
         $scope.$on('socket:start game', onStartGame);
         function onStartGame(ev, data) {
           //TODO: implemend
-          $scope.NumberReady = $scope.NumberReady - 1;
+          if (data.status === 'success') {
+            userProfile.userCharacter = data.character;
+            $scope.$state.go('game');
+
+          } else {
+            console.log('cannot start game');
+          }
+          
         }
 
 
@@ -137,8 +153,7 @@ define(['angular'], function (angular) {
 
         $scope.start = function () {
           if (gameProfile.isCreator && ($scope.NumberReady == gameProfile.gameCap)) {
-            socket.emit('start game', {gameID: gameProfile.gameID});
-            //$scope.$state.go('game'); 
+            socket.emit('start game', {gameID: gameProfile.gameID});             
           }
         }
 
