@@ -38,10 +38,10 @@ define(['angular'], function (angular) {
         socket.forward('vote player', $scope);
         $scope.$on('socket:vote player', onVotePlayer);
         function onVotePlayer(ev, data) {
-          if ($scope.voteList.hasOwnProperty(data.userName)) {
-            $scope.voteList[data.userName] += 1;
+          if ($scope.voteList.hasOwnProperty(data.votePlayer)) {
+            $scope.voteList[data.votePlayer] += 1;
           } else {
-            $scope.voteList[data.userName] = 1;            
+            $scope.voteList[data.votePlayer] = 1;            
           }
           $scope.voteAmount += 1;
           if ($scope.voteAmount == userProfile.gameCap) {
@@ -68,7 +68,7 @@ define(['angular'], function (angular) {
 
         $scope.votePlayer = function () {
           if ($scope.choosePlayer !== "") {
-            socket.emit('vote player', {votePlayer: $scope.choosePlayer, userID: userProfile: userID, userName: userProfile.userName});
+            socket.emit('vote player', {votePlayer: $scope.choosePlayer, gameID: gameProfile.gameID, userID: userProfile.userID, userName: userProfile.userName});
           };
           $scope.isVoted = true;
         }

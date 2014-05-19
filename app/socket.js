@@ -64,7 +64,8 @@ module.exports = function(io, mongoose) {
                                     currentPlayers: game.currentPlayers, 
                                     gameRoles: game.gameRoles, 
                                     isCreator: 1 });
-            console.log(game._id);
+            
+            client.join(data.userName);
             client.join(game._id);
           };
       });
@@ -122,6 +123,8 @@ module.exports = function(io, mongoose) {
     }
 
     function onPlayerConfirm(data) {
+      console.log('confirm');
+      console.log(data);
       client.broadcast.to(data.gameID).emit('player confirm', {userName: data.userName});
     }
 
@@ -134,10 +137,17 @@ module.exports = function(io, mongoose) {
         if (err) {
           client.emit('start game', {status: 'error', msg: 'game not exist'});
         } else {
-          var playerList = game.currentPlayers;
-          var characterList = generateCharacters(game.gameCap, game.gameRoles);
-          for (var i = 0; i < playerList.length; ++i) {
-            client.broadcast.to(playerList[i]).emit('start game', {status: 'success', character: characterList[i]});
+          
+
+          console.log(game);
+          console.log(io.rooms);
+          var playerList = io.rooms['/'+game[0]._id];
+          console.log(playerList);
+          var characterList = generateCharacters(game[0].gameCap, game[0].gameRoles);
+        
+          
+          for (var i = 0; i < playerList.length; ++i) {  
+            io.sockets.socket(playerList[i]).emit('start game', {status: 'success', character: characterList[i]});
           }
         }
 
@@ -145,9 +155,26 @@ module.exports = function(io, mongoose) {
     }
 
     function generateCharacters(gameCap, gameRoles) {
-      console.log(gameRoles);
-      return ['village', 'village','police','mafia', 'mafia'];
+      //TODO: complete function
+      
+      return ['village', 'mafia','police','mafia', 'mafia'];
     }
+
+    function onVotePlayer(data) {
+      console.log(io.rooms);
+      client.in(data.gameID).emit('vote player', {status: 'success', votePlayer: data.votePlayer, fromUser: data.userName});
+    }
+
+    function onKillPlayer(data) {
+      
+    }
+
+    function onSleep(data) {
+      
+    }
+
+
+
 
     
 

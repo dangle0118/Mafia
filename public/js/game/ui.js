@@ -1,4 +1,4 @@
-define(['text!html/game/gameboard.html'
+define(['text!html/game/gameboard.html',
   'angular','ui-router'], function (gameBoardTpl, angular) {
   'use strict';
 
