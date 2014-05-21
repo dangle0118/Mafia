@@ -31,9 +31,24 @@ define(['angular'], function (angular) {
         function killPlayer(player) {
           //TODO: incomplete
           gameProfile.gameCap -=1 ;
-          $scope.voteList[player] = -1;
           $scope.voteAmount = 0;  
+
+          for (var temp in $scope.playerList) {
+            $scope.playerList[temp] = 0;
+          }
+          $scope.playerList[playerList] = -1;
+
         }
+
+        function checkEqualVote(player) {
+          for (var temp in $scope.playerList) {
+            if ((temp !=== player) && ($scope.playerList[temp]==$scope.playerList[player])) {
+              return true;
+            }
+          }
+          return false;
+        }
+
 
         socket.forward('vote player', $scope);
         $scope.$on('socket:vote player', onVotePlayer);
@@ -45,9 +60,16 @@ define(['angular'], function (angular) {
           }
           $scope.voteAmount += 1;
           if ($scope.voteAmount == userProfile.gameCap) {
+            console.log('voted');
             $scope.voteAmount = 0;
-            killPlayer(getHighestVote());            
+            var player = getHighestVote();
+            if (!checkEqualVote(player)) {
+              killPlayer(player);
+            } else {
+              console.log('have draw');
+            }
           }
+          console.log(voteList);
         }
 
         socket.forward('kill player', $scope);
@@ -62,6 +84,7 @@ define(['angular'], function (angular) {
           //TODO: implemend
           $scope.sleepAmount += 1;
           if ($scope.sleepAmount == gameProfile.gameCap) {
+            $scope.$state.go('game.'+gameProfile.userCharacter);
             
           }
         }
@@ -76,18 +99,35 @@ define(['angular'], function (angular) {
         $scope.goSleep = function () {
           socket.emit('sleep', {userName: userProfile.userName});
           $scope.isSleep = true;
+        }   
+    }])
+    
+    .controller("VillageCtrl", ["$scope","socket", "gameprofile",
+      function ($scope, socket, gameProfile) {
+
+        socket.forward('kill player', $scope);
+        $scope.$on('socket:kill player', onKillPlayer);
+        function onKillPlayer(ev, data) {
+          //TODO: implemend
         }
 
 
 
+    }])
+
+    .controller("MafiaCtrl", ["$scope","socket", "gameprofile",
+      function ($scope, socket, gameProfile) {
+
+        socket.forward('kill player', $scope);
+        $scope.$on('socket:kill player', onKillPlayer);
+        function onKillPlayer(ev, data) {
+          //TODO: implemend
+        }
+
+        
 
 
 
-
-
-
-        //$scope.$state.go('game.'+userProfile.userCharacter);
-    
     }])
 
 

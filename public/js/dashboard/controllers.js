@@ -109,16 +109,14 @@ define(['angular'], function (angular) {
 
         socket.forward('player confirm',$scope);
         $scope.$on('socket:player confirm', onPlayerConfirm);
-        function onPlayerConfirm(ev, data) {
-          //TODO: implemend
+        function onPlayerConfirm(ev, data) {       
           $scope.NumberReady = $scope.NumberReady + 1;
           console.log(data.userName);
         }
 
         socket.forward('player cancel',$scope);
         $scope.$on('socket:player cancel', onPlayerCancel);
-        function onPlayerCancel(ev, data) {
-          //TODO: implemend
+        function onPlayerCancel(ev, data) {      
           $scope.NumberReady = $scope.NumberReady - 1;
           console.log(data.userName);
         }
@@ -134,8 +132,7 @@ define(['angular'], function (angular) {
 
           } else {
             console.log('cannot start game');
-          }
-          
+          }          
         }
 
 

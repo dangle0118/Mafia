@@ -123,8 +123,6 @@ module.exports = function(io, mongoose) {
     }
 
     function onPlayerConfirm(data) {
-      console.log('confirm');
-      console.log(data);
       client.broadcast.to(data.gameID).emit('player confirm', {userName: data.userName});
     }
 
@@ -162,7 +160,7 @@ module.exports = function(io, mongoose) {
 
     function onVotePlayer(data) {
       console.log(io.rooms);
-      client.in(data.gameID).emit('vote player', {status: 'success', votePlayer: data.votePlayer, fromUser: data.userName});
+      io.sockets.in(data.gameID).emit('vote player', {status: 'success', votePlayer: data.votePlayer, fromUser: data.userName});
     }
 
     function onKillPlayer(data) {
