@@ -8,7 +8,7 @@ define(['angular'], function (angular) {
         $scope.character = userProfile.userCharacter;
         $scope.day = 1;
         $scope.isNight = false;
-        $scope.choosePlayer = "";
+        $scope.choosePlayer = '';
         $scope.playerList = gameProfile.currentPlayers;
         $scope.voteList = {};
         $scope.voteAmount = 0;
@@ -18,7 +18,7 @@ define(['angular'], function (angular) {
 
         function getHighestVote() {
           var highest = 0;
-          var name = "";
+          var name = '';
           for (var player in $scope.playerList) {
             if ($scope.playerList[player] > 0 ) {
               highest = $scope.playerList[player];
@@ -49,6 +49,11 @@ define(['angular'], function (angular) {
           return false;
         }
 
+        socket.forward('wake up', $scope);
+        socket.$on('socket:wake up', onWakeUp);
+        function onWakeUp(ev, data) {
+          
+        }
 
         socket.forward('vote player', $scope);
         $scope.$on('socket:vote player', onVotePlayer);
@@ -90,7 +95,7 @@ define(['angular'], function (angular) {
         }
 
         $scope.votePlayer = function () {
-          if ($scope.choosePlayer !== "") {
+          if ($scope.choosePlayer !== '') {
             socket.emit('vote player', {votePlayer: $scope.choosePlayer, gameID: gameProfile.gameID, userID: userProfile.userID, userName: userProfile.userName});
           };
           $scope.isVoted = true;
@@ -102,7 +107,7 @@ define(['angular'], function (angular) {
         }   
     }])
     
-    .controller("VillageCtrl", ["$scope","socket", "gameprofile",
+    .controller('VillageCtrl', ['$scope','socket', 'gameprofile',
       function ($scope, socket, gameProfile) {
 
         socket.forward('kill player', $scope);
@@ -115,20 +120,46 @@ define(['angular'], function (angular) {
 
     }])
 
-    .controller("MafiaCtrl", ["$scope","socket", "gameprofile",
+    .controller('MafiaCtrl', ['$scope','socket', 'gameProfile',
       function ($scope, socket, gameProfile) {
 
-        socket.forward('kill player', $scope);
-        $scope.$on('socket:kill player', onKillPlayer);
-        function onKillPlayer(ev, data) {
+        socket.forward('kill village', $scope);
+        $scope.$on('socket:kill village', onKillVillage);
+        function onKillVillage(ev, data) {
           //TODO: implemend
         }
 
-        
-
-
+        $scope.killVillage = function () {
+          if ($scope.choosePlayer !== '') {
+            socket.emit('kill village', {role: gameProfile.userCharacter, votePlayer: $scope.choosePlayer, gameID: gameProfile.gameID, userID: userProfile.userID, userName: userProfile.userName});
+          };
+        }        
 
     }])
+
+    .controller('DoctorCtrl', ['$scope', 'socket', 'gameProfile',
+      function ($scope, socket, gameProfile) {
+        if ($scope.choosePlayer !== '') {
+            socket.emit('save village', {role: gameProfile.userCharacter, votePlayer: $scope.choosePlayer, gameID: gameProfile.gameID, userID: userProfile.userID, userName: userProfile.userName});
+          };      
+    }])
+    
+    .controller('PoliceCtrl', ['$scope', 'socket', 'gameProfile',
+      function ($scope, socket, gameProfile) {
+        if ($scope.choosePlayer !== '') {
+            socket.emit('inspect village', {role: gameProfile.userCharacter, votePlayer: $scope.choosePlayer, gameID: gameProfile.gameID, userID: userProfile.userID, userName: userProfile.userName});
+          };      
+    }])
+
+    .controller('HookerCtrl', ['$scope', 'socket', 'gameProfile',
+      function ($scope, socket, gameProfile) {
+        if ($scope.choosePlayer !== '') {
+            socket.emit('hook village', {role: gameProfile.userCharacter, votePlayer: $scope.choosePlayer, gameID: gameProfile.gameID, userID: userProfile.userID, userName: userProfile.userName});
+          };      
+    }])
+    
+
+
 
 
 })

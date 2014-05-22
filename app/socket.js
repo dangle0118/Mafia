@@ -9,6 +9,9 @@ module.exports = function(io, mongoose) {
   	gameRoles: Array
   });
 
+  var GameProcess = {};
+
+
 
   
   io.sockets.on('connection', onConnection);
@@ -26,6 +29,10 @@ module.exports = function(io, mongoose) {
     client.on('vote player', onVotePlayer);
     client.on ('kill player', onKillPlayer);
     client.on('sleep', onSleep); 
+    client.on('kill village', onNightAction);
+    client.on('save village', onNightAction);
+    client.on('inspect village', onNightAction);
+    client.on('hook village', onNightAction);
 
 
     function onNewPlayer(data) {
@@ -135,14 +142,13 @@ module.exports = function(io, mongoose) {
         if (err) {
           client.emit('start game', {status: 'error', msg: 'game not exist'});
         } else {
-          
 
-          console.log(game);
-          console.log(io.rooms);
           var playerList = io.rooms['/'+game[0]._id];
           console.log(playerList);
           var characterList = generateCharacters(game[0].gameCap, game[0].gameRoles);
-        
+            
+          initializeGameProcess(game[0]); 
+          
           
           for (var i = 0; i < playerList.length; ++i) {  
             io.sockets.socket(playerList[i]).emit('start game', {status: 'success', character: characterList[i]});
@@ -150,6 +156,18 @@ module.exports = function(io, mongoose) {
         }
 
       });
+    }
+
+    function initializeGameProcess(game) {
+      GameProcess[game._id] = {
+        gameCap: game.gameCap;        
+      };
+      for (role in game.gameRoles) {
+        GameProcess[game._id][roles] = {};
+        count += 1;
+      }
+      GameProcess[game._id].amountRole = count;
+      GameProcess[game._id].currentSubmit = 0;
     }
 
     function generateCharacters(gameCap, gameRoles) {
@@ -162,6 +180,56 @@ module.exports = function(io, mongoose) {
       console.log(io.rooms);
       io.sockets.in(data.gameID).emit('vote player', {status: 'success', votePlayer: data.votePlayer, fromUser: data.userName});
     }
+
+    function executeAction(ID) {
+      if (GameProcess[ID].role.hasOwnProperty('hooker')) {
+        for (var character in GameProcess[ID].role) {
+          if (GameProcess[ID].role[character].userName === GameProcess[ID].role['hooker'].votePlayer) {
+            GameProcess[ID].role[character].userName = '';
+            break;
+          }
+        }
+      }
+
+      if (GameProcess[ID].role.hasOwnProperty('mafia')) {
+        for (var character in GameProcess[ID].role) {
+          if (GameProcess[ID].role[character].userName === GameProcess[ID].role['mafia'].votePlayer) {
+            GameProcess[ID].role[character].userName = '';
+            break;
+          }
+        }
+      }
+
+      if (GameProcess[ID].role.hasOwnProperty('doctor')) {
+        if (GameProcess[ID].role['mafia'].votePlayer === GameProcess[ID].role['doctor'].votePlayer) {
+            GameProcess[ID].role['mafia'].votePlayer = '';           
+        }        
+      }
+
+
+      if (GameProcess[ID].role.hasOwnProperty('police')) {
+        if(GameProcess[ID].role['police'].userName !== '') {
+          //TODO: implemend
+          client.broadcast.to(GameProcess[ID].role['police'].userName).emit('inspect village', {data: 'inspect village'});
+        }
+      }
+
+    }
+
+    function onNightAction(data) {
+      GameProcess[data.gameID].roles[data.role] = {userName: data.userName, votePlayer: data.votePlayer};
+      GameProcess[data.gameID].currentSubmit +=1;
+      if (GameProcess[data.gameID].currentSubmit == GameProcess[data.gameID].amountRole) {
+        executeAction(data.gameID);
+
+        //broad cast wake up to all players
+
+
+      }
+      
+    }
+
+    
 
     function onKillPlayer(data) {
       
