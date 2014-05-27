@@ -10,7 +10,6 @@ define(['text!html/game/mafia.html',
         $stateProvider        
           .state('game', {
             url: '/game',
-            abstract: true,
             views: {
               'root1': {                                
               },

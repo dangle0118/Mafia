@@ -1,6 +1,9 @@
 module.exports = function(io, mongoose) {
   var User = mongoose.model('user', {
-  	userName: String
+  	userName: String,
+    inGame: Boolean,
+    socket: String,
+
   });
   var Game = mongoose.model('game', {
   	roomName: String, 
@@ -37,12 +40,13 @@ module.exports = function(io, mongoose) {
 
     function onNewPlayer(data) {
       User.find({userName: data.userName}, function (err, user) {
-        console.log(user);
-      	if (user.length !== 0 ) {
+         	if (user.length !== 0 ) {
 					  client.emit('new player', {status: 'error', msg: 'username existed'});      
       	} else {
       		User.create({
-      			userName: data.userName
+      			userName: data.userName,
+            inGame: false,
+            socket: client
       		}, function (err, user) {
       				if (err) {
       					client.emit('new player', { status: 'error', msg: 'cannot create'});
@@ -112,8 +116,7 @@ module.exports = function(io, mongoose) {
             result.gameID = game._id; 
             result.isCreator = 0;
             delete result._id;                
-            client.emit('join game', {status: 'success', data: result});
-            console.log(game._id);
+            client.emit('join game', {status: 'success', data: result});                    
             client.join(game._id);
             client.broadcast.to(game._id).emit('player join', {userName: data.userName});
 
@@ -147,7 +150,7 @@ module.exports = function(io, mongoose) {
           console.log(playerList);
           var characterList = generateCharacters(game[0].gameCap, game[0].gameRoles);
             
-          initializeGameProcess(game[0]); 
+          initializeGameProcess(game[0], playerList, characterList); 
           
           
           for (var i = 0; i < playerList.length; ++i) {  
@@ -158,30 +161,84 @@ module.exports = function(io, mongoose) {
       });
     }
 
-    function initializeGameProcess(game) {
+    function initializeGameProcess(game, playerList, characterList ) {
       GameProcess[game._id] = {
-        gameCap: game.gameCap;        
+        gameCap: game.gameCap        
       };
-      for (role in game.gameRoles) {
-        GameProcess[game._id][roles] = {};
+      var count = 0;
+      for (var role in game.gameRoles) {
+        GameProcess[game._id][role] = {};
         count += 1;
       }
       GameProcess[game._id].amountRole = count;
       GameProcess[game._id].currentSubmit = 0;
+      GameProcess[game._id].votePlayers = {};
+      GameProcess[game._id].voteAmount = 0;
+      count = 0;
+      for (var player in playerList) {
+        User.find({socket: player}, function (err, data) {
+          if (!err) {
+            var user = data[0];
+            user.inGame = true;
+            GameProcess[game._id].votePlayer[user.userName].vote = 0;
+            GameProcess[game._id].votePlayer[user.userName].character = characterList[count];
+            user.save();
+          }
+        });
+        count +=1;
+      };
+      console.log(GameProcess[game._id]);
     }
 
     function generateCharacters(gameCap, gameRoles) {
       //TODO: complete function
       
-      return ['village', 'mafia','police','mafia', 'mafia'];
+      return ['village', 'mafia','police','mafia', 'village'];
     }
 
-    function onVotePlayer(data) {
-      console.log(io.rooms);
+    function getHighestVote(ID) {
+      var highest = 0;
+      var name = '';
+      for (var player in GameProcess[ID].votePlayer) {
+        if (GameProcess[ID].votePlayer[player].vote > 0 ) {
+          highest = GameProcess[ID].votePlayer[player].vote;
+          name = player;
+        }
+      }
+      return player;
+    }
+
+    function checkEqualVote(player, ID) {
+      for (var temp in GameProcess[ID].votePlayer) {
+        if ((temp !== player) && (GameProcess[ID].votePlayer[temp].vote === GameProcess[ID].votePlayer[player].vote)) {
+          return true;
+        }
+      }
+      return false;
+    }
+
+    function onVotePlayer(data) {     
       io.sockets.in(data.gameID).emit('vote player', {status: 'success', votePlayer: data.votePlayer, fromUser: data.userName});
+      GameProcess[data.gameID].votePlayer[data.userName].vote += 1;
+      GameProcess[data.gameID].voteAmount += 1;
+      if (GameProcess[data.gameID].voteAmount == GameProcess[data.gameID].gameCap) {
+        var player = getHighestVote(data.gameID);
+        if (!checkEqualVote(player, data.gameID)) {
+          io.sockets.in[data.gameID].emit('kill player', {status: 'success', 
+                                            killPlayer: player, 
+                                            character: GameProcess[data.gameID].votePlayer[player].character});         
+          GameProcess[data.gameID].gameCap -=1;
+          //TODO: implemend the rest
+        }
+
+
+
+      }
+       
     }
 
     function executeAction(ID) {
+      var killList = [];
       if (GameProcess[ID].role.hasOwnProperty('hooker')) {
         for (var character in GameProcess[ID].role) {
           if (GameProcess[ID].role[character].userName === GameProcess[ID].role['hooker'].votePlayer) {
@@ -214,24 +271,29 @@ module.exports = function(io, mongoose) {
         }
       }
 
+      if (GameProcess[ID].role['mafia'].votePlayer !== '') {
+        killList.push(GameProcess[ID].role['mafia'].votePlayer);
+      }
+
+      return killList;
+
     }
 
     function onNightAction(data) {
       GameProcess[data.gameID].roles[data.role] = {userName: data.userName, votePlayer: data.votePlayer};
       GameProcess[data.gameID].currentSubmit +=1;
       if (GameProcess[data.gameID].currentSubmit == GameProcess[data.gameID].amountRole) {
-        executeAction(data.gameID);
-
+        var killList = executeAction(data.gameID);
         //broad cast wake up to all players
-
-
+        io.sockets.in(data.gameID).emit('kill player', {data: killList});
       }
       
     }
 
     
 
-    function onKillPlayer(data) {
+    function onKillPlayer(data) {    
+
       
     }
 

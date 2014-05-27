@@ -83,8 +83,7 @@ define(['angular'], function (angular) {
         
         function isContain(key, arr) {
           for (var i = 0; i < arr.length; ++i) {           
-            if (arr[i] === key) {
-              console.log('here');
+            if (arr[i] === key) {        
               return true;
             }
           }
@@ -93,8 +92,7 @@ define(['angular'], function (angular) {
 
         socket.forward('player join', $scope);
         $scope.$on('socket:player join', onPlayerJoin);
-        function onPlayerJoin(ev, data) {
-          console.log(data);                    
+        function onPlayerJoin(ev, data) {                          
           if (!isContain(data.userName, $scope.currentPlayers)){
             gameProfile.joinPlayer(data.userName);
           }   

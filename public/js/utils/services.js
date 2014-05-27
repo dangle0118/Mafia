@@ -29,6 +29,13 @@ define(["angular", "btford.socket-io"], function (angular) {
         },
         joinPlayer: function (userName) {
           this.currentPlayers.push(userName);
+        },
+        getCurrentPlayers: function () {
+          var list = [];
+          for (var player in this.currentPlayers) {
+            list.push(player);
+          }
+          return list;
         }
       };
     })

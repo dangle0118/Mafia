@@ -7,14 +7,17 @@ You are {{character}}<br/>
 
 <div class="" style="margin-top:10px" ng-repeat="player in playerList" >
   <label  >
-    <input type="radio" name="player" value="{{player}}" ng-model="$parent.choosePlayer"></input> 
+    <input type="radio" name="player" value="{{player}}" ng-model="$parent.choosePlayer"/> 
       {{player}}
   </label><br/>
-  <button type="button" ng-click="votePlayer()">
+  
+</div>
+<div ui-view="CharacterAction">
+	<button type="button" ng-click="goSleep()">Sleep</button>
+	<button type="button" ng-click="votePlayer()">
     Vote
   </button>
+  {{voteList}}
+	{{voteAmount}}
 </div>
-<div ui-view="CharacterAction"></div>
 
-{{voteList}}
-{{voteAmount}}

@@ -9,7 +9,7 @@ define(['angular'], function (angular) {
         $scope.day = 1;
         $scope.isNight = false;
         $scope.choosePlayer = '';
-        $scope.playerList = gameProfile.currentPlayers;
+        $scope.playerList = gameProfile.getCurrentPlayers();
         $scope.voteList = {};
         $scope.voteAmount = 0;
         $scope.sleepAmount = 0;
@@ -36,13 +36,13 @@ define(['angular'], function (angular) {
           for (var temp in $scope.playerList) {
             $scope.playerList[temp] = 0;
           }
-          $scope.playerList[playerList] = -1;
+          $scope.playerList[player] = -1;
 
         }
 
         function checkEqualVote(player) {
           for (var temp in $scope.playerList) {
-            if ((temp !=== player) && ($scope.playerList[temp]==$scope.playerList[player])) {
+            if ((temp !== player) && ($scope.playerList[temp] === $scope.playerList[player])) {
               return true;
             }
           }
@@ -50,7 +50,7 @@ define(['angular'], function (angular) {
         }
 
         socket.forward('wake up', $scope);
-        socket.$on('socket:wake up', onWakeUp);
+        $scope.$on('socket:wake up', onWakeUp);
         function onWakeUp(ev, data) {
           
         }
@@ -64,17 +64,17 @@ define(['angular'], function (angular) {
             $scope.voteList[data.votePlayer] = 1;            
           }
           $scope.voteAmount += 1;
-          if ($scope.voteAmount == userProfile.gameCap) {
+          if ($scope.voteAmount == gameProfile.gameCap) {
             console.log('voted');
             $scope.voteAmount = 0;
             var player = getHighestVote();
             if (!checkEqualVote(player)) {
-              killPlayer(player);
+              socket.emit('kill player', {userName: player});
             } else {
               console.log('have draw');
             }
           }
-          console.log(voteList);
+          console.log($scope.voteList);
         }
 
         socket.forward('kill player', $scope);
@@ -103,7 +103,7 @@ define(['angular'], function (angular) {
 
         $scope.goSleep = function () {
           socket.emit('sleep', {userName: userProfile.userName});
-          $scope.isSleep = true;
+          $scope.isSleep = true;          
         }   
     }])
     
