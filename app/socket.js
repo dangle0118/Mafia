@@ -224,9 +224,8 @@ module.exports = function(io, mongoose) {
       if (GameProcess[data.gameID].voteAmount == GameProcess[data.gameID].gameCap) {
         var player = getHighestVote(data.gameID);
         if (!checkEqualVote(player, data.gameID)) {
-          io.sockets.in[data.gameID].emit('kill player', {status: 'success', 
-                                            killPlayer: player, 
-                                            character: GameProcess[data.gameID].votePlayer[player].character});         
+          io.sockets.in[data.gameID].emit('kill player', {status: 'success',
+                                            data: { player: GameProcess[data.gameID].votePlayer[player].character});         
           GameProcess[data.gameID].gameCap -=1;
           //TODO: implemend the rest
         }
@@ -285,7 +284,9 @@ module.exports = function(io, mongoose) {
       if (GameProcess[data.gameID].currentSubmit == GameProcess[data.gameID].amountRole) {
         var killList = executeAction(data.gameID);
         //broad cast wake up to all players
-        io.sockets.in(data.gameID).emit('kill player', {data: killList});
+        io.sockets.in(data.gameID).emit('wake up', {status: 'wakeup'});
+        
+        io.sockets.in(data.gameID).emit('kill player', {status: 'success', data: killList});
       }
       
     }
