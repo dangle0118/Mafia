@@ -229,15 +229,12 @@ module.exports = function(io, mongoose) {
           GameProcess[data.gameID].gameCap -=1;
           //TODO: implemend the rest
         }
-
-
-
       }
        
     }
 
     function executeAction(ID) {
-      var killList = [];
+      var killList = {};
       if (GameProcess[ID].role.hasOwnProperty('hooker')) {
         for (var character in GameProcess[ID].role) {
           if (GameProcess[ID].role[character].userName === GameProcess[ID].role['hooker'].votePlayer) {
@@ -271,7 +268,7 @@ module.exports = function(io, mongoose) {
       }
 
       if (GameProcess[ID].role['mafia'].votePlayer !== '') {
-        killList.push(GameProcess[ID].role['mafia'].votePlayer);
+        killList.[GameProcess[ID].role['mafia'].votePlayer] = GameProcess[ID].votePlayer[GameProcess[ID].role['mafia'].votePlayer].character;
       }
 
       return killList;
@@ -284,9 +281,10 @@ module.exports = function(io, mongoose) {
       if (GameProcess[data.gameID].currentSubmit == GameProcess[data.gameID].amountRole) {
         var killList = executeAction(data.gameID);
         //broad cast wake up to all players
-        io.sockets.in(data.gameID).emit('wake up', {status: 'wakeup'});
-        
-        io.sockets.in(data.gameID).emit('kill player', {status: 'success', data: killList});
+        io.sockets.in(data.gameID).emit('wake up', {status: 'wakeup'});    
+        for (var player in killList) {
+          io.sockets.in(data.gameID).emit('kill player', {status: 'success', data: {player: killList[player]}});
+        }
       }
       
     }

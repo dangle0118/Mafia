@@ -6,8 +6,8 @@ You are {{character}}<br/>
 <h4 ng-show='isNight'>Night {{day}}</h4>
 
 <div class="" style="margin-top:10px" ng-repeat="player in playerList" >
-  <label  >
-    <input type="radio" name="player" value="{{player}}" ng-model="$parent.choosePlayer"/> 
+  <label class="radio" >
+    <input type="radio" name="player" value="{{player}}" ng-model="$parent.choosePlayer" disabled="{{isDead(player)}}"/> 
       {{player}}
   </label><br/>
   
@@ -17,7 +17,6 @@ You are {{character}}<br/>
 	<button type="button" ng-click="votePlayer()">
     Vote
   </button>
-  {{voteList}}
-	{{voteAmount}}
+
 </div>
 

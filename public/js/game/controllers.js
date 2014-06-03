@@ -2,36 +2,41 @@ define(['angular'], function (angular) {
   'use strict';
 
   return angular.module('game.controllers',[])
-    .controller('GameBoardCtrl',['$scope','socket', 'gameProfile','userProfile', 
-      function ($scope, socket, gameProfile, userProfile) {
+    .controller('GameBoardCtrl',['$scope','socket', 'gameProfile','userProfile', 'gameProcess', 
+      function ($scope, socket, gameProfile, userProfile, gameProcess) {
 
-        $scope.character = userProfile.userCharacter;
-        $scope.day = 1;
+        $scope.character = userProfile.userCharacter;        
         $scope.isNight = false;
-        $scope.choosePlayer = '';
-        $scope.playerList = gameProfile.getCurrentPlayers();
-        $scope.voteList = {};
-        $scope.voteAmount = 0;
-        $scope.sleepAmount = 0;
-        $scope.isVoted = false;
-        $scope.isSleep = false;
+        $scope.choosePlayer = '';     
 
-        
-        function killPlayer(player) {
+        function killPlayer(player, character) {
           //TODO: incomplete
-          gameProfile.gameCap -=1 ;
-          $scope.voteAmount = 0;  
-
-          for (var temp in $scope.playerList) {
-            $scope.playerList[temp] = 0;
+          gameProcess.gameCap -= 1 ;            
+          gameProcess.deadList.push(player);
+          if (gameProfile.onMafiaSide(character)) {
+            gameProcess.mafiaAmount -=1;
           }
-          $scope.playerList[player] = -1;
         }
-      
+
+        $scope.$watch('gameProcess.gameCap', function (newValue) {
+          if ((newValue - gameProcess.mafiaAmount) <= gameProcess.mafiaAmount ) {
+            console.log('game end');
+          }
+
+        });
+
+
+
+        $scope.isDead = function(player) {
+          if (gameProcess.deadList.indexOf(player) === -1)
+            return true;
+          return false;
+        }
 
         socket.forward('wake up', $scope);
         $scope.$on('socket:wake up', onWakeUp);
         function onWakeUp(ev, data) {
+          gameProcess.day += 1;
           $scope.$state.go('game');          
         }
 
@@ -42,14 +47,14 @@ define(['angular'], function (angular) {
             $scope.voteList[data.votePlayer] += 1;
           } else {
             $scope.voteList[data.votePlayer] = 1;            
-          }
-          $scope.voteAmount += 1;    
+          }   
         }
 
         socket.forward('kill player', $scope);
         $scope.$on('socket:kill player', onPlayerKilled);
         function onPlayerKilled(ev, data) {
           //TODO: implemend
+          console.log(data);
         }
 
         socket.forward('sleep', $scope);

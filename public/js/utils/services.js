@@ -44,12 +44,18 @@ define(["angular", "btford.socket-io"], function (angular) {
         init: function (data) {
           angular.extend(this, {
             day: 1,
-            playerList: data.getCurrentPlayers()
+            gameCap: data.gameCap,
+            isDead: false,
+            playerList: data.getCurrentPlayers(),
+            deadList: []
           });
         },
         reset: function () {
           angular.extend(this, {
             isNight: false,
+            isSleep: false,
+            isVoted: false,
+
           });
         }
       }
