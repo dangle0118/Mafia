@@ -55,7 +55,6 @@ define(["angular", "btford.socket-io"], function (angular) {
             isNight: false,
             isSleep: false,
             isVoted: false,
-
           });
         }
       }

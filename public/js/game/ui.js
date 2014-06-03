@@ -1,7 +1,8 @@
 define(['text!html/game/mafia.html',
   'text!html/game/village.html',
   'text!html/game/gameboard.html',
-  'angular','ui-router'], function (mafiaTpl, villageTpl, gameBoardTpl, angular) {
+  'text!html/game/end.html',  
+  'angular','ui-router'], function (mafiaTpl, villageTpl, gameBoardTpl, endGameTpl, angular) {
   'use strict';
 
   return angular.module('game.ui', ['ui.router'])
@@ -32,7 +33,7 @@ define(['text!html/game/mafia.html',
             url: '/village', 
             views: {
               'CharacterAction': {
-                templatte: villageTpl,
+                template: villageTpl,
                 controller: "VillageCtrl"
               }
             }
@@ -41,8 +42,17 @@ define(['text!html/game/mafia.html',
             url: '/mafia', 
             views: {
               'CharacterAction': {
-                templatte: mafiaTpl,
+                template: mafiaTpl,
                 controller: "MafiaCtrl"
+              }
+            }
+          })
+
+          .state('end', {
+            url: '/end', 
+            views: {
+              'root2': {
+                template: endGameTpl
               }
             }
           })

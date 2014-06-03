@@ -125,10 +125,8 @@ module.exports = function(io, mongoose) {
             
           } else {
             client.emit('join game', {status: 'fail', msg: "Room is fulled"});
-          };
-      
+          };      
         };
-
       });
     }
 
@@ -285,25 +283,13 @@ module.exports = function(io, mongoose) {
         for (var player in killList) {
           io.sockets.in(data.gameID).emit('kill player', {status: 'success', data: {player: killList[player]}});
         }
-      }
-      
-    }
-
-    
-
-    function onKillPlayer(data) {    
-
-      
-    }
+      }      
+    } 
 
     function onSleep(data) {
-      
+      io.sockets.in(data.gameID).emit('sleep', {status: 'success', userName: data.userName});      
     }
 
-
-
-
-    
 
   }
 
