@@ -4,7 +4,8 @@ define(['angular'], function (angular) {
   return angular.module('game.controllers.gameboardCtrl',[])
     .controller('GameBoardCtrl',['$scope','socket', 'gameProfile','userProfile', 'gameProcess', 
       function ($scope, socket, gameProfile, userProfile, gameProcess) {
-
+        $scope.gameProcess = gameProcess;
+        console.log($scope.gameProcess)
         $scope.character = userProfile.userCharacter;        
         $scope.isNight = false;
         $scope.choosePlayer = '';     
@@ -26,9 +27,12 @@ define(['angular'], function (angular) {
         });
 
         $scope.isDead = function(player) {
-          if (gameProcess.deadList.indexOf(player) === -1)
-            return true;
-          return false;
+          if ((gameProcess.deadList != []) && (gameProcess.deadList.indexOf(player) === -1))
+          {
+            console.log('not dead');
+            return false;
+          }
+          return true;
         }
 
         socket.forward('wake up', $scope);
@@ -41,18 +45,14 @@ define(['angular'], function (angular) {
         socket.forward('vote player', $scope);
         $scope.$on('socket:vote player', onVotePlayer);
         function onVotePlayer(ev, data) {
-          if ($scope.voteList.hasOwnProperty(data.votePlayer)) {
-            $scope.voteList[data.votePlayer] += 1;
-          } else {
-            $scope.voteList[data.votePlayer] = 1;            
-          }   
+          
         }
 
         socket.forward('kill player', $scope);
         $scope.$on('socket:kill player', onPlayerKilled);
         function onPlayerKilled(ev, data) {
           //TODO: implemend
-          console.log(data);
+          killPlayer(data.player, data.character);
         }
 
         socket.forward('sleep', $scope);

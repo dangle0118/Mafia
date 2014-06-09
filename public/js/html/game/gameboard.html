@@ -5,9 +5,12 @@ You are {{character}}<br/>
 <h4 ng-show='!isNight'>Day {{day}}</h4>
 <h4 ng-show='isNight'>Night {{day}}</h4>
 
-<div class="" style="margin-top:10px" ng-repeat="player in playerList" >
+{{gameProcess}}
+
+<div class="" style="margin-top:10px" ng-repeat="player in gameProcess.playerList" >
   <label class="radio" >
-    <input type="radio" name="player" value="{{player}}" ng-model="$parent.choosePlayer" disabled="{{isDead(player)}}"/> 
+    <input type="radio" name="player" value="{{player}}" ng-model="$parent.choosePlayer" ng-disabled="isDead(player)"/> 
+    {{isDead(player)}}
       {{player}}
   </label><br/>
   

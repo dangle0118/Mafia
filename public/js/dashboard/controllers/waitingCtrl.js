@@ -2,8 +2,8 @@ define(['angular'], function (angular) {
   'use strict';
 
   return angular.module('dashboard.controllers.waitingCtrl',[])
-    .controller('WaitingCtrl',['$scope','socket','gameProfile','userProfile',
-      function ($scope, socket, gameProfile, userProfile) {        
+    .controller('WaitingCtrl',['$scope','socket','gameProfile','userProfile', 'gameProcess',
+      function ($scope, socket, gameProfile, userProfile, gameProcess) {        
         $scope.currentPlayers = gameProfile.currentPlayers;
         $scope.NumberReady = 0;
         $scope.isReady = 0;
@@ -50,10 +50,10 @@ define(['angular'], function (angular) {
         socket.forward('start game', $scope);
         $scope.$on('socket:start game', onStartGame);
         function onStartGame(ev, data) {
-          //TODO: implemend
-          console.log(data);
+          //TODO: implemend          
           if (data.status === 'success') {
             userProfile.userCharacter = data.character;
+            gameProcess.init(gameProfile.gameCap, gameProfile.getCurrentPlayers());
             $scope.$state.go('game');
 
           } else {

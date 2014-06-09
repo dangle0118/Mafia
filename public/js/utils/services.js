@@ -33,7 +33,7 @@ define(["angular", "btford.socket-io"], function (angular) {
         getCurrentPlayers: function () {
           var list = [];
           for (var player in this.currentPlayers) {
-            list.push(player);
+            list.push(this.currentPlayers[player]);
           }
           return list;
         }
@@ -41,12 +41,12 @@ define(["angular", "btford.socket-io"], function (angular) {
     })
     .factory("gameProcess", function () {
       return {
-        init: function (data) {
+        init: function (gameCap, playerList) {
           angular.extend(this, {
             day: 1,
-            gameCap: data.gameCap,
+            gameCap: gameCap,
             isDead: false,
-            playerList: data.getCurrentPlayers(),
+            playerList: playerList,
             deadList: []
           });
         },
