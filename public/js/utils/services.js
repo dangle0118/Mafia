@@ -36,6 +36,12 @@ define(["angular", "btford.socket-io"], function (angular) {
             list.push(this.currentPlayers[player]);
           }
           return list;
+        },
+        onMafiaSide: function(character) {
+          if (character == 'mafia' || character=='hooker') {
+            return true;
+          }
+          return false;
         }
       };
     })
@@ -47,7 +53,8 @@ define(["angular", "btford.socket-io"], function (angular) {
             gameCap: gameCap,
             isDead: false,
             playerList: playerList,
-            deadList: []
+            deadList: [],
+            sleepAmount: 0
           });
         },
         reset: function () {
@@ -55,6 +62,7 @@ define(["angular", "btford.socket-io"], function (angular) {
             isNight: false,
             isSleep: false,
             isVoted: false,
+            sleepAmount: 0
           });
         }
       }

@@ -11,8 +11,13 @@ define(['angular'], function (angular) {
         $scope.choosePlayer = '';     
 
         function killPlayer(player, character) {
-          //TODO: incomplete
-          gameProcess.gameCap -= 1 ;            
+          console.log('kill ' + player + ' ' + character );
+          if (player === userProfile.userName) {
+              $scope.$state.go('game.dead');
+          }
+
+
+          gameProcess.gameCap -= 1 ;
           gameProcess.deadList.push(player);
           if (gameProfile.onMafiaSide(character)) {
             gameProcess.mafiaAmount -=1;
@@ -23,13 +28,11 @@ define(['angular'], function (angular) {
           if ((newValue - gameProcess.mafiaAmount) <= gameProcess.mafiaAmount ) {
             $scope.$state.go('end');
           }
-
         });
 
         $scope.isDead = function(player) {
           if ((gameProcess.deadList != []) && (gameProcess.deadList.indexOf(player) === -1))
           {
-            console.log('not dead');
             return false;
           }
           return true;
@@ -51,17 +54,17 @@ define(['angular'], function (angular) {
         socket.forward('kill player', $scope);
         $scope.$on('socket:kill player', onPlayerKilled);
         function onPlayerKilled(ev, data) {
-          //TODO: implemend
           killPlayer(data.player, data.character);
         }
 
         socket.forward('sleep', $scope);
         $scope.$on('socket:sleep', onSleep);
         function onSleep(ev, data) {
-          //TODO: implemend
-          $scope.sleepAmount += 1;
-          if ($scope.sleepAmount == gameProfile.gameCap) {
-            $scope.$state.go('game.'+gameProfile.userCharacter);
+          console.log(userProfile.userCharacter);
+          gameProcess.sleepAmount += 1;
+            console.log(gameProcess.sleepAmount);
+          if (gameProcess.sleepAmount == gameProcess.gameCap) {
+            $scope.$state.go('game.'+userProfile.userCharacter);
             
           }
         }

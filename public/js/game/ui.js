@@ -1,8 +1,9 @@
 define(['text!html/game/mafia.html',
   'text!html/game/village.html',
   'text!html/game/gameboard.html',
-  'text!html/game/end.html',  
-  'angular','ui-router'], function (mafiaTpl, villageTpl, gameBoardTpl, endGameTpl, angular) {
+  'text!html/game/ghost.html',
+  'text!html/game/end.html',
+  'angular','ui-router'], function (mafiaTpl, villageTpl, gameBoardTpl,ghostTpl, endGameTpl, angular) {
   'use strict';
 
   return angular.module('game.ui', ['ui.router'])
@@ -47,7 +48,14 @@ define(['text!html/game/mafia.html',
               }
             }
           })
-
+          .state('game.dead', {
+            url: '/dead',
+            views: {
+              'CharacterAction': {
+                  template: ghostTpl
+              }
+            }
+          })
           .state('end', {
             url: '/end', 
             views: {

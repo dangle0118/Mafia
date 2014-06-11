@@ -43,7 +43,6 @@ module.exports = function(io, mongoose) {
          	if (user.length !== 0 ) {
 					  client.emit('new player', {status: 'error', msg: 'username existed'});      
       	} else {
-          console.log(client);
       		User.create({
       			userName: data.userName,
             inGame: false,
@@ -163,11 +162,16 @@ module.exports = function(io, mongoose) {
       GameProcess[game._id] = {
         gameCap: game.gameCap        
       };
+      GameProcess[game._id].role = {};
       var count = 0;
-      for (var role in game.gameRoles) {
-        GameProcess[game._id][role] = {};
-        count += 1;
+      for (var role = 0; role < characterList.length; ++role) {
+        GameProcess[game._id].role[characterList[role]] = {};
+        if (role != 'village') {
+            count += 1;
+        }
       }
+      console.log(GameProcess[game._id]);
+
       GameProcess[game._id].amountRole = count;
       GameProcess[game._id].currentSubmit = 0;
       GameProcess[game._id].votePlayers = {};
@@ -227,9 +231,11 @@ module.exports = function(io, mongoose) {
       if (GameProcess[data.gameID].voteAmount == GameProcess[data.gameID].gameCap) {
         var player = getHighestVote(data.gameID);
         if (!checkEqualVote(player, data.gameID)) {
-            console.log(player)
-          io.sockets.in(data.gameID).emit('kill player', {status: 'success', data: { player: player, character: GameProcess[data.gameID].votePlayers[player].character}});
+          io.sockets.in(data.gameID).emit('kill player', {status: 'success', player: player, character: GameProcess[data.gameID].votePlayers[player].character});
           GameProcess[data.gameID].gameCap -=1;
+          if (GameProcess[data.gameID].votePlayers[player].character != "village") {
+              GameProcess[data.gameID].amountRole -=1;
+          }
         }
       }
        
@@ -247,6 +253,7 @@ module.exports = function(io, mongoose) {
       }
 
       if (GameProcess[ID].role.hasOwnProperty('mafia')) {
+          console.log('mafia');
         for (var character in GameProcess[ID].role) {
           if (GameProcess[ID].role[character].userName === GameProcess[ID].role['mafia'].votePlayer) {
             GameProcess[ID].role[character].userName = '';
@@ -278,14 +285,19 @@ module.exports = function(io, mongoose) {
     }
 
     function onNightAction(data) {
-      GameProcess[data.gameID].roles[data.role] = {userName: data.userName, votePlayer: data.votePlayer};
+      GameProcess[data.gameID].role[data.role] = {userName: data.userName, votePlayer: data.votePlayer};
       GameProcess[data.gameID].currentSubmit +=1;
+        console.log(GameProcess[data.gameID]);
       if (GameProcess[data.gameID].currentSubmit == GameProcess[data.gameID].amountRole) {
         var killList = executeAction(data.gameID);
         //broad cast wake up to all players
         io.sockets.in(data.gameID).emit('wake up', {status: 'wakeup'});    
         for (var player in killList) {
-          io.sockets.in(data.gameID).emit('kill player', {status: 'success', data: {player: killList[player]}});
+          io.sockets.in(data.gameID).emit('kill player', {status: 'success', player: player, character: killList[player]});
+          GameProcess[data.gameID].gameCap -=1;
+          if (GameProcess[data.gameID].votePlayers[player].character != "village") {
+            GameProcess[data.gameID].amountRole -=1;
+          }
         }
       }      
     } 
