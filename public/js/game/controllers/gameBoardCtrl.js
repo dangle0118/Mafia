@@ -14,21 +14,17 @@ define(['angular'], function (angular) {
           console.log('kill ' + player + ' ' + character );
           if (player === userProfile.userName) {
               $scope.$state.go('game.dead');
-          }
-
 
           gameProcess.gameCap -= 1 ;
           gameProcess.deadList.push(player);
           if (gameProfile.onMafiaSide(character)) {
             gameProcess.mafiaAmount -=1;
           }
-        }
 
-        $scope.$watch('gameProcess.gameCap', function (newValue) {
-          if ((newValue - gameProcess.mafiaAmount) <= gameProcess.mafiaAmount ) {
+          if (gameProcess.gameCap - gameProcess.mafiaAmount <= gameProcess.mafiaAmount) {
             $scope.$state.go('end');
           }
-        });
+        }
 
         $scope.isDead = function(player) {
           if ((gameProcess.deadList != []) && (gameProcess.deadList.indexOf(player) === -1))

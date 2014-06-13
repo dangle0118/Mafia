@@ -1,9 +1,11 @@
 define(['text!html/game/mafia.html',
   'text!html/game/village.html',
+  'text!html/game/police.html',
+  'text!html/game/doctor.html',
   'text!html/game/gameboard.html',
   'text!html/game/ghost.html',
   'text!html/game/end.html',
-  'angular','ui-router'], function (mafiaTpl, villageTpl, gameBoardTpl,ghostTpl, endGameTpl, angular) {
+  'angular','ui-router'], function (mafiaTpl, villageTpl, policeTpl, doctorTpl, gameBoardTpl,ghostTpl, endGameTpl, angular) {
   'use strict';
 
   return angular.module('game.ui', ['ui.router'])
@@ -34,8 +36,7 @@ define(['text!html/game/mafia.html',
             url: '/village', 
             views: {
               'CharacterAction': {
-                template: villageTpl,
-                controller: "VillageCtrl"
+                template: villageTpl
               }
             }
           })
@@ -48,6 +49,25 @@ define(['text!html/game/mafia.html',
               }
             }
           })
+          .state('game.police', {
+            url: '/police',
+            views: {
+              'CharacterAction': {
+                template: policeTpl,
+                controller: "PoliceCtrl"
+              }
+            }
+          })
+          .state('game.doctor', {
+            url: '/doctor',
+            views: {
+              'CharacterAction': {
+                template: doctorTpl,
+                controller: "DoctorCtrl"
+              }
+            }
+          })
+
           .state('game.dead', {
             url: '/dead',
             views: {

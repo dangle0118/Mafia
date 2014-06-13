@@ -12,8 +12,9 @@ define(['angular'], function (angular) {
         }
 
         $scope.killVillage = function () {
-          if ($scope.choosePlayer !== '') {
-            socket.emit('kill village', {role: userProfile.userCharacter, votePlayer: $scope.choosePlayer, gameID: gameProfile.gameID, userID: userProfile.userID, userName: userProfile.userName});
+          console.log($scope.$parent.choosePlayer);
+          if ($scope.$parent.choosePlayer !== '') {
+            socket.emit('kill village', {role: userProfile.userCharacter, votePlayer: $scope.$parent.choosePlayer, gameID: gameProfile.gameID, userID: userProfile.userID, userName: userProfile.userName});
           };
         }    
     }])
