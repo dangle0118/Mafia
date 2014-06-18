@@ -11,7 +11,18 @@ define(['angular'], function (angular) {
           return true;
         }
 
+        function generateGameChar (charList) {
+          var gameCharList = [];
+          angular.forEach(charList, function (value, key) {
+            if (value) {
+              gameCharList.push(key);
+            }
+          });
+          return gameCharList;
+        }
+
         $scope.createGame = function () {
+          $scope.game.gameChar = generateGameChar($scope.gameChar);
           //TODO: check validation
           if (checkValidInfo()) {
             $scope.game.userName = userProfile.userName;

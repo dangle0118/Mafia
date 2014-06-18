@@ -2,7 +2,7 @@ module.exports = function(io, mongoose) {
   var User = mongoose.model('user', {
   	userName: String,
     inGame: Boolean,
-    socket: String,
+    socket: String
 
   });
   var Game = mongoose.model('game', {
@@ -205,9 +205,21 @@ module.exports = function(io, mongoose) {
     }
 
     function generateCharacters(gameCap, gameRoles) {
-      //TODO: complete function
-      
-      return ['village', 'mafia','police','mafia', 'village'];
+      var result = [];
+      var pos;
+      for (var i = 0; i < gameRoles.length; ++i) {
+        do {
+          // random from 0 - 9
+          pos = Math.floor((Math.random() * 10) );
+        } while ( typeof result[pos] != 'undefined');
+        result[pos] = gameRoles[i];
+      }
+      for (var i = 0; i < gameCap; ++i) {
+        if (typeof result[i] != 'undefined') {
+          result[i] = 'village';
+        }
+      }
+      return result;
     }
 
     function getHighestVote(ID) {
