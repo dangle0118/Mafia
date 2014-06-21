@@ -2,8 +2,8 @@ define(['angular'], function (angular) {
   'use strict';
 
   return angular.module('dashboard.controllers.gameListCtrl',[])    
-    .controller('GameListCtrl',['$scope', 'socket', 'gameProfile', 'userProfile',
-      function ($scope, socket, gameProfile, userProfile) {
+    .controller('GameListCtrl',['$scope', 'socket', 'gameProfile', 'userProfile', 'gameLog',
+      function ($scope, socket, gameProfile, userProfile, gameLog) {
         $scope.room = {};
         
         socket.emit('get list');
@@ -16,15 +16,13 @@ define(['angular'], function (angular) {
         socket.forward('add game', $scope);
         $scope.$on('socket:add game', onAddGame);
         function onAddGame(ev, data) {
-          //TODO: add content
-          console.log('add');
+          $scope.roomList[data.gameID] = data;
         }
 
         socket.forward('remove game', $scope);
-        $scope.$on('socket:remove game', onAddGame);
-        function onAddGame(ev, data) {
-          //TODO: add content
-          console.log('remove');
+        $scope.$on('socket:remove game', onRemoveGame);
+        function onRemoveGame(ev, data) {
+          delete $scope.roomList[data.gameID];
         }
 
         $scope.joinGame = function () {
@@ -37,9 +35,8 @@ define(['angular'], function (angular) {
         $scope.$on('socket:join game', onJoinGame);
         function onJoinGame(ev, data) {
           if (data.status === 'success'){
-            console.log(data);
-            
             gameProfile.init(data.data);
+            gameLog.init(gameProfile.currentPlayers, gameProfile.currentPlayers.length);
             $scope.$state.go('waitingRoom');            
           } else {
             console.log("cannot join game");

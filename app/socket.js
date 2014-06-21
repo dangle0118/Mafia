@@ -62,7 +62,7 @@ module.exports = function(io, mongoose) {
       				} else {
                 console.log('new user: ' + data.userName);
       					client.emit('new player', {status: 'success', userName: user.userName, id: user._id});  
-                client.join(data.userName);    
+
       				}
       			});
       	}
@@ -74,7 +74,7 @@ module.exports = function(io, mongoose) {
         roomName : data.roomName,
         gameCap: data.gameCap,
         currentPlayers: [data.userName],
-        gameRoles: [data.gameChar]
+        gameRoles: data.gameChar
       }, function (err, game) {
           if (err) {
             client.emit('create game', {status:'error', msg: 'cannot create game'});
@@ -84,9 +84,11 @@ module.exports = function(io, mongoose) {
                                     currentPlayers: game.currentPlayers, 
                                     gameRoles: game.gameRoles, 
                                     isCreator: 1 });
-            
             client.join(data.userName);
             client.join(game._id);
+
+            client.broadcast.emit('add game', {status: 'success', roomName: game.roomName,
+              gameID: game._id, gameCap: game.gameCap, currentPlayers: game.currentPlayers} );
           };
       });
 		
@@ -99,7 +101,7 @@ module.exports = function(io, mongoose) {
         } else {
           var result = {};
           game.forEach(function (gameRoom) {
-            result[gameRoom.roomName] = {
+            result[gameRoom._id] = {
               roomName: gameRoom.roomName,
               gameID: gameRoom._id,
               gameCap: gameRoom.gameCap,
@@ -162,6 +164,8 @@ module.exports = function(io, mongoose) {
           for (var i = 0; i < playerList.length; ++i) {  
             io.sockets.socket(playerList[i]).emit('start game', {status: 'success', character: characterList[i]});
           }
+          client.broadcast.emit('remove game', {status: 'success', roomName: game[0].roomName,
+            gameID: game[0]._id} );
         }
 
       });
@@ -211,11 +215,11 @@ module.exports = function(io, mongoose) {
         do {
           // random from 0 - 9
           pos = Math.floor((Math.random() * 10) );
-        } while ( typeof result[pos] != 'undefined');
+        } while ( (typeof result[pos] != 'undefined') || (pos >= gameCap));
         result[pos] = gameRoles[i];
       }
       for (var i = 0; i < gameCap; ++i) {
-        if (typeof result[i] != 'undefined') {
+        if (typeof result[i] == 'undefined') {
           result[i] = 'village';
         }
       }

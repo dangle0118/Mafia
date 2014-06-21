@@ -6,12 +6,20 @@
   <input type="text" ng-model="game.gameCap"/>
 
   <div class="game-option" >
-	<label><input type="checkbox" ng-model="gameChar.police"/>Police </label>
-	<label><input type="checkbox" ng-model="gameChar.doctor"/>Doctor </label>
-	<label><input type="checkbox" ng-model="gameChar.hooker"/>Hooker </label>
-	<label><input type="checkbox" ng-model="gameChar.vigilante"/>Vigilante </label>
-	<label><input type="checkbox" ng-model="gameChar.traitor"/>Traitor </label>
-</div>
+    <h5> Village side:</h5>
+    <label><input type="checkbox" ng-model="gameChar.goodSide.police"/>Police </label>
+    <label><input type="checkbox" ng-model="gameChar.goodSide.doctor"/>Doctor </label>
+    <label><input type="checkbox" ng-model="gameChar.goodSide.vigilante"/>Vigilante </label>
+  </div>
+  <div class="game-option">
+    <h5> Mafia side:</h5>
+      <span> Number of mafia:</span>
+      <input type="text" ng-model="game.mafiaAmount">
+      <label><input type="checkbox" ng-model="gameChar.badSide.hooker"/>Hooker </label>
+	    <label><input type="checkbox" ng-model="gameChar.badSide.traitor"/>Traitor </label>
+  </div>
+
+
 <button type="submit">Create Game</button>
 
 

@@ -5,35 +5,41 @@ define(['text!html/game/mafia.html',
   'text!html/game/gameboard.html',
   'text!html/game/ghost.html',
   'text!html/game/end.html',
-  'angular','ui-router'], function (mafiaTpl, villageTpl, policeTpl, doctorTpl, gameBoardTpl,ghostTpl, endGameTpl, angular) {
+  'text!html/game/gamelog.html',
+  'angular','ui-router'], function (mafiaTpl, villageTpl, policeTpl, doctorTpl, gameBoardTpl,ghostTpl, endGameTpl, gameLogTpl, angular) {
   'use strict';
 
   return angular.module('game.ui', ['ui.router'])
     .config(['$stateProvider', '$urlRouterProvider', 
       function ($stateProvider, $urlRouterProvider) {
-        $stateProvider        
+        $stateProvider
           .state('game', {
-            url: '/game',
+            abstract: true,
+            views: {
+              'root3': {
+                template: gameLogTpl,
+                controller: "GameLogCtrl"
+              }
+            }
+
+          })
+
+          .state('game.day', {
+            url: '/day',
             views: {
               'root1': {                                
               },
-              'root2': {
+              'root2@': {
                 template: gameBoardTpl,
                 controller: "GameBoardCtrl"
               }
                           
             }
           })
-          .state('game.day', {
-            url: '/day',
-            views: {
-
-            }
-
-          })
 
           .state('game.village', {
-            url: '/village', 
+            url: '/village',
+            parent: 'game.day',
             views: {
               'CharacterAction': {
                 template: villageTpl
@@ -41,7 +47,8 @@ define(['text!html/game/mafia.html',
             }
           })
           .state('game.mafia', {
-            url: '/mafia', 
+            url: '/mafia',
+            parent: 'game.day',
             views: {
               'CharacterAction': {
                 template: mafiaTpl,
@@ -51,6 +58,7 @@ define(['text!html/game/mafia.html',
           })
           .state('game.police', {
             url: '/police',
+            parent: 'game.day',
             views: {
               'CharacterAction': {
                 template: policeTpl,
@@ -60,6 +68,7 @@ define(['text!html/game/mafia.html',
           })
           .state('game.doctor', {
             url: '/doctor',
+            parent: 'game.day',
             views: {
               'CharacterAction': {
                 template: doctorTpl,
@@ -70,6 +79,7 @@ define(['text!html/game/mafia.html',
 
           .state('game.dead', {
             url: '/dead',
+            parent: 'game.day',
             views: {
               'CharacterAction': {
                   template: ghostTpl

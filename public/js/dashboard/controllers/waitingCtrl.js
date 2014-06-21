@@ -2,8 +2,8 @@ define(['angular'], function (angular) {
   'use strict';
 
   return angular.module('dashboard.controllers.waitingCtrl',[])
-    .controller('WaitingCtrl',['$scope','socket','gameProfile','userProfile', 'gameProcess',
-      function ($scope, socket, gameProfile, userProfile, gameProcess) {        
+    .controller('WaitingCtrl',['$scope','socket','gameProfile','userProfile', 'gameProcess', 'gameLog',
+      function ($scope, socket, gameProfile, userProfile, gameProcess, gameLog) {
         $scope.currentPlayers = gameProfile.currentPlayers;
         $scope.NumberReady = 0;
         $scope.isReady = 0;
@@ -23,6 +23,7 @@ define(['angular'], function (angular) {
         function onPlayerJoin(ev, data) {                          
           if (!isContain(data.userName, $scope.currentPlayers)){
             gameProfile.joinPlayer(data.userName);
+            gameLog.addLog('join', data.userName);
           }   
         }
 
@@ -31,20 +32,24 @@ define(['angular'], function (angular) {
         function onPlayerLeave(ev, data) {
           //TODO: implemend removePlayer
           gameProfile.removePlayer(data.userName);
+          gameLog.addLog('leave', data.userName);
+
         }
 
         socket.forward('player confirm',$scope);
         $scope.$on('socket:player confirm', onPlayerConfirm);
         function onPlayerConfirm(ev, data) {       
           $scope.NumberReady = $scope.NumberReady + 1;
-          console.log(data.userName);
+          gameLog.addLog('confirm', data.userName);
+
         }
 
         socket.forward('player cancel',$scope);
         $scope.$on('socket:player cancel', onPlayerCancel);
         function onPlayerCancel(ev, data) {      
           $scope.NumberReady = $scope.NumberReady - 1;
-          console.log(data.userName);
+          gameLog.addLog('cancel', data.userName);
+
         }
 
         socket.forward('start game', $scope);
@@ -54,7 +59,8 @@ define(['angular'], function (angular) {
           if (data.status === 'success') {
             userProfile.userCharacter = data.character;
             gameProcess.init(gameProfile.gameCap, gameProfile.getCurrentPlayers());
-            $scope.$state.go('game');
+            gameLog.refreshLog();
+            $scope.$state.go('game.day');
 
           } else {
             console.log('cannot start game');

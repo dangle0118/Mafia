@@ -5,6 +5,7 @@ define(['angular',
   './controllers/doctorCtrl',
   './controllers/policeCtrl',
   './controllers/hookerCtrl',
+  './controllers/gameLogCtrl'
 
   ], function (angular) {
   'use strict';
@@ -15,6 +16,7 @@ define(['angular',
     'game.controllers.mafiaCtrl',
     'game.controllers.doctorCtrl',
     'game.controllers.policeCtrl',
-    'game.controllers.hookerCtrl'
+    'game.controllers.hookerCtrl',
+    'game.controllers.gameLogCtrl'
     ]) 
 })

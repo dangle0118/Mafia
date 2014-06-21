@@ -2,8 +2,8 @@ define(['angular'], function (angular) {
   'use strict';
 
   return angular.module('game.controllers.gameboardCtrl',[])
-    .controller('GameBoardCtrl',['$scope','socket', 'gameProfile','userProfile', 'gameProcess', 
-      function ($scope, socket, gameProfile, userProfile, gameProcess) {
+    .controller('GameBoardCtrl',['$scope','socket', 'gameProfile','userProfile', 'gameProcess','gameLog',
+      function ($scope, socket, gameProfile, userProfile, gameProcess, gameLog) {
         $scope.gameProcess = gameProcess;
         console.log($scope.gameProcess)
         $scope.character = userProfile.userCharacter;        
@@ -12,15 +12,15 @@ define(['angular'], function (angular) {
 
         function killPlayer(player, character) {
           console.log('kill ' + player + ' ' + character );
-          if (player === userProfile.userName) {
-              $scope.$state.go('game.dead');
-
+          gameLog.addLog('kill', player, character);
           gameProcess.gameCap -= 1 ;
           gameProcess.deadList.push(player);
           if (gameProfile.onMafiaSide(character)) {
             gameProcess.mafiaAmount -=1;
           }
-
+          if (player === userProfile.userName) {
+            $scope.$state.go('game.dead');
+          }
           if (gameProcess.gameCap - gameProcess.mafiaAmount <= gameProcess.mafiaAmount) {
             $scope.$state.go('end');
           }
@@ -44,7 +44,7 @@ define(['angular'], function (angular) {
         socket.forward('vote player', $scope);
         $scope.$on('socket:vote player', onVotePlayer);
         function onVotePlayer(ev, data) {
-          
+          gameLog.addLog('vote', data.votePlayer, data.fromUser);
         }
 
         socket.forward('kill player', $scope);

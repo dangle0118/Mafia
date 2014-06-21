@@ -67,5 +67,51 @@ define(["angular", "btford.socket-io"], function (angular) {
         }
       }
     })
+    .factory("gameLog", function () {
+
+      function putPlayer(playerList) {
+        var playerColor = {};
+        for (var i = 0; i < playerList.length; ++i) {
+          playerColor[playerList[i]] = i+1;
+        }
+        return playerColor;
+      }
+      return {
+        init: function (playerList, playerAmount) {
+          this.gameLog = [];
+          this.playerColor = putPlayer(playerList);
+          this.playerAmount = playerAmount;
+        },
+        refreshLog: function () {
+          this.gameLog = [];
+        },
+        addPlayer: function (player) {
+          this.playerAmount += 1;
+          this.playerColor[player] = this.playerAmount;
+        },
+        addLog: function (command, votePlayer, data) {
+          var aLog = {};
+          switch(command) {
+            case 'vote':
+              aLog['color'] = this.playerColor[votePlayer];
+              aLog['content'] = data + ' voted ' + votePlayer;
+              this.gameLog.push(aLog);
+              break;
+            case 'kill':
+              aLog['color'] = this.playerColor[votePlayer];
+              aLog['content'] = votePlayer + ' (' + data + ') has been killed';
+              this.gameLog.push(aLog);
+              break;
+            case 'join':
+              this.addPlayer(votePlayer);
+              aLog['color'] = this.playerColor[votePlayer];
+              aLog['content'] = votePlayer + ' has joined the game';
+              this.gameLog.push(aLog);
+              break;
+          }
+          console.log(this.gameLog, this.playerColor, this.playerAmount);
+        }
+      };
+    })
     
 });
