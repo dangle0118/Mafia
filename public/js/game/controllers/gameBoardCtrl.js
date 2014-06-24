@@ -19,9 +19,11 @@ define(['angular'], function (angular) {
             gameProcess.mafiaAmount -=1;
           }
           if (player === userProfile.userName) {
-            $scope.$state.go('game.dead');
+            $scope.$state.go('dead');
           }
-          if (gameProcess.gameCap - gameProcess.mafiaAmount <= gameProcess.mafiaAmount) {
+          //check end game condition
+          console.log(gameProcess);
+          if ((gameProcess.gameCap - gameProcess.mafiaAmount <= gameProcess.mafiaAmount) || (gameProcess.mafiaAmount === 0)) {
             $scope.$state.go('end');
           }
         }

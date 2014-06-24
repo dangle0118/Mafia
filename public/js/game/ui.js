@@ -77,11 +77,10 @@ define(['text!html/game/mafia.html',
             }
           })
 
-          .state('game.dead', {
+          .state('dead', {
             url: '/dead',
-            parent: 'game.day',
             views: {
-              'CharacterAction': {
+              'root2': {
                   template: ghostTpl
               }
             }

@@ -58,7 +58,7 @@ define(['angular'], function (angular) {
           //TODO: implemend          
           if (data.status === 'success') {
             userProfile.userCharacter = data.character;
-            gameProcess.init(gameProfile.gameCap, gameProfile.getCurrentPlayers());
+            gameProcess.init(gameProfile.gameCap, gameProfile.getCurrentPlayers(), gameProfile.mafiaAmount);
             gameLog.refreshLog();
             $scope.$state.go('game.day');
 

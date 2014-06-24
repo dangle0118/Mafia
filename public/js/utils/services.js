@@ -24,6 +24,7 @@ define(["angular", "btford.socket-io"], function (angular) {
             gameCap: data.gameCap,
             currentPlayers: data.currentPlayers,
             gameRoles: data.gameRoles,
+            mafiaAmount: data.mafiaAmount,
             isCreator: data.isCreator
           });
         },
@@ -47,14 +48,15 @@ define(["angular", "btford.socket-io"], function (angular) {
     })
     .factory("gameProcess", function () {
       return {
-        init: function (gameCap, playerList) {
+        init: function (gameCap, playerList, mafiaAmount) {
           angular.extend(this, {
             day: 1,
             gameCap: gameCap,
             isDead: false,
             playerList: playerList,
             deadList: [],
-            sleepAmount: 0
+            sleepAmount: 0,
+            mafiaAmount: mafiaAmount
           });
         },
         reset: function () {

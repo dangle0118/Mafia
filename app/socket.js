@@ -9,7 +9,8 @@ module.exports = function(io, mongoose) {
   	roomName: String, 
   	gameCap: Number,
   	currentPlayers: Array,
-  	gameRoles: Array
+  	gameRoles: Array,
+    mafiaAmount: Number
   });
 
   var GameProcess = {};
@@ -74,7 +75,8 @@ module.exports = function(io, mongoose) {
         roomName : data.roomName,
         gameCap: data.gameCap,
         currentPlayers: [data.userName],
-        gameRoles: data.gameChar
+        gameRoles: data.gameChar,
+        mafiaAmount: data.mafiaAmount
       }, function (err, game) {
           if (err) {
             client.emit('create game', {status:'error', msg: 'cannot create game'});
@@ -82,13 +84,14 @@ module.exports = function(io, mongoose) {
             client.emit('create game', {status: 'success', roomName: game.roomName,
                                     gameID: game._id, gameCap: game.gameCap,
                                     currentPlayers: game.currentPlayers, 
-                                    gameRoles: game.gameRoles, 
+                                    gameRoles: game.gameRoles,
+                                    mafiaAmount: game.mafiaAmount,
                                     isCreator: 1 });
             client.join(data.userName);
             client.join(game._id);
 
             client.broadcast.emit('add game', {status: 'success', roomName: game.roomName,
-              gameID: game._id, gameCap: game.gameCap, currentPlayers: game.currentPlayers} );
+              gameID: game._id, gameCap: game.gameCap, currentPlayers: game.currentPlayers, mafiaAmount: game.mafiaAmount,} );
           };
       });
 		
