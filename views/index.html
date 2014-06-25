@@ -2,6 +2,8 @@
 <html>
 <head>
   <title>Mafia</title>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
   <script type="text/javascript" src="http://localhost:8080/bower_components/requirejs/require.js"></script>
@@ -10,10 +12,21 @@
   <script type="stylesheet" src="http://localhost:8080/css/bootstrap.css"></script> 
   
 </head>
-<body >    
-  <div ui-view="root1"></div>
-  <div ui-view="root2"></div>
-  <div ui-view="root3"></div>
-  
+<body style="max-width:980px; margin: 0 auto; min-width: 325px">
+  <div class="container">
+    <div class="row">
+      <div class="col-xs-12 nopadding">
+        <div ui-view="root1"></div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-sm-8 col-xs-12 nopadding">
+        <div ui-view="root2"></div>
+      </div>
+      <div class="col-sm-4 col-xs-12 nopadding">
+        <div ui-view="root3"></div>
+      </div>
+    </div>
+  </div>
 </body>
 </html>
