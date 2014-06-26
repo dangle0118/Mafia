@@ -2,7 +2,7 @@ define(['angular'], function (angular) {
   'use strict';
 
   return angular.module('game.controllers.doctorCtrl',[])
-    .controller('VillageCtrl', ['$scope','socket', 'gameProfile','userProfile',
+    .controller('DoctorCtrl', ['$scope','socket', 'gameProfile','userProfile',
       function ($scope, socket, gameProfile, userProfile) {
 
         $scope.saveVillage = function () {

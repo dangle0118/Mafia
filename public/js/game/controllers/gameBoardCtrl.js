@@ -40,7 +40,8 @@ define(['angular'], function (angular) {
         $scope.$on('socket:wake up', onWakeUp);
         function onWakeUp(ev, data) {
           gameProcess.day += 1;
-          $scope.$state.go('game');          
+          gameProcess.sleepAmount = 0;
+          $scope.$state.go('game.day');
         }
 
         socket.forward('vote player', $scope);

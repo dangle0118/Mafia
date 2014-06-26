@@ -30,7 +30,6 @@ define(['angular'], function (angular) {
         socket.forward('player leave', $scope);
         $scope.$on('socket:player leave', onPlayerLeave);
         function onPlayerLeave(ev, data) {
-          //TODO: implemend removePlayer
           gameProfile.removePlayer(data.userName);
           gameLog.addLog('leave', data.userName);
 
@@ -55,7 +54,6 @@ define(['angular'], function (angular) {
         socket.forward('start game', $scope);
         $scope.$on('socket:start game', onStartGame);
         function onStartGame(ev, data) {
-          //TODO: implemend          
           if (data.status === 'success') {
             userProfile.userCharacter = data.character;
             gameProcess.init(gameProfile.gameCap, gameProfile.getCurrentPlayers(), gameProfile.mafiaAmount);
