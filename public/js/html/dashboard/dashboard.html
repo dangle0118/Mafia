@@ -1,34 +1,43 @@
 <form ng-submit="createGame()">
-<div class="" style="margin-top: 30px">
-  <h4> Create a game </h4>
-  <input type="text" ng-model="game.roomName" style="width: 200px"/>
-  <h4>Game Capacity </h4>
-  <input type="text" ng-model="game.gameCap"/>
-
-  <div class="game-option" >
-    <h5> Village side:</h5>
-    <label><input type="checkbox" ng-model="gameChar.goodSide.police"/>Police </label>
-    <label><input type="checkbox" ng-model="gameChar.goodSide.doctor"/>Doctor </label>
-    <label><input type="checkbox" ng-model="gameChar.goodSide.vigilante"/>Vigilante </label>
+  <div class="col-xs-12 input-space">
+    <h4> Create a game </h4>
   </div>
-  <div class="game-option">
-    <h5> Mafia side:</h5>
-      <span> Number of mafia:</span>
-      <input type="text" ng-model="game.mafiaAmount">
-      <label><input type="checkbox" ng-model="gameChar.badSide.hooker"/>Hooker </label>
-	    <label><input type="checkbox" ng-model="gameChar.badSide.traitor"/>Traitor </label>
+  <div class="col-xs-12 nopadding">
+    <div class="col-xs-12 col-sm-4 input-space title-input">
+      <b>Room name:</b>
+    </div>
+    <input class="col-xs-12 col-sm-6 form-control" type="text" ng-model="game.roomName" />
   </div>
-
-
-<button type="submit">Create Game</button>
-
-
-
-
-
-
-
-</div>
+  <div class="col-xs-12 nopadding">
+    <div class="col-xs-12 col-sm-4 input-space title-input">
+      <b>Game capacity: </b>
+    </div>
+    <input class="col-xs-12 col-sm-6 form-control" type="text" ng-model="game.gameCap"/>
+  </div>
+  <div class="col-xs-12 nopadding">
+    <div class="col-xs-12 col-sm-4 input-space ">
+      <b>Number of Mafias: </b>
+    </div>
+    <input class="col-xs-12 col-sm-6 form-control" type="text" ng-model="game.mafiaAmount">
+  </div>
+  <div class="col-xs-6">
+    <div class="game-option" >
+      <h5> Village side:</h5>
+      <label class="checkbox"><input type="checkbox" ng-model="gameChar.goodSide.police"/>Police </label>
+      <label class="checkbox"><input type="checkbox" ng-model="gameChar.goodSide.doctor"/>Doctor </label>
+      <label class="checkbox"><input type="checkbox" ng-model="gameChar.goodSide.vigilante"/>Vigilante </label>
+    </div>
+  </div>
+  <div class="col-xs-6">
+    <div class="game-option">
+      <h5> Mafia side:</h5>
+      <label class="checkbox"><input type="checkbox" ng-model="gameChar.badSide.hooker"/>Hooker </label>
+      <label class="checkbox"><input type="checkbox" ng-model="gameChar.badSide.traitor"/>Traitor </label>
+    </div>
+  </div>
+  <div class="col-xs-12 apart text-center">
+    <button class="btn btn-default" type="submit">Create Game</button>
+  </div>
 </form>
  
 

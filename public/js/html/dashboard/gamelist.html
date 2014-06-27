@@ -1,12 +1,16 @@
-<h1>game list</h1>
-
-<form ng-submit="joinGame()">
-<div class="" style="margin-top:10px" ng-repeat="game in roomList" >
-	<label  >
-		<input type="radio" name="room" value="{{game.gameID}}" ng-model="$parent.gameChoose"></input> {{game.roomName}}, {{game.gameCap}}, {{game.gameID}} 
-	</label><br/>
+<div class="col-xs-12 input-space">
+  <h4>Game list:</h4>
 </div>
+<form ng-submit="joinGame()">
+  <div class="col-xs-12 well apart-sm">
+    <div class="col-xs-12" style="margin-top:10px" ng-repeat="game in roomList" >
+      <label  >
+        <input type="radio" name="room" value="{{game.gameID}}" ng-model="$parent.gameChoose"></input> {{game.roomName}}, {{game.gameCap}}, {{game.gameID}}
+      </label><br/>
+    </div>
+  </div>
 
-
-<button type="submit">Join Game</button>
+<div class="col-xs-12 apart text-center">
+  <button class="btn btn-default" type="submit">Join Game</button>
+</div>
 </form>
