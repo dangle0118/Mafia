@@ -1,8 +1,11 @@
-define(['text!html/dashboard/gamelist.html',
+define([
+  'text!html/utils/chatroom.html',
+  'text!html/dashboard/gamelist.html',
   'text!html/dashboard/waitingroom.html',
   'text!html/dashboard/dashboard.html',
   'text!html/dashboard/header.html',
-  'angular','ui-router'], function (gameListTpl, waitingRoomTpl, dashboardTpl, headerTpl, angular) {
+  'text!html/game/gamelog.html',
+  'angular','ui-router'], function (chatRoomTpl, gameListTpl, waitingRoomTpl, dashboardTpl, headerTpl, gameLogTpl, angular) {
   'use strict';
 
   return angular.module('dashboard.ui', ['ui.router'])
@@ -31,6 +34,14 @@ define(['text!html/dashboard/gamelist.html',
               'root2': {
                 template: waitingRoomTpl,
                 controller: 'WaitingCtrl'
+              },
+              'root3': {
+                template: gameLogTpl,
+                controller: "GameLogCtrl"
+              },
+              'root4@': {
+                template: chatRoomTpl,
+                controller: "ChatRoomCtrl"
               }
 
             }
@@ -38,4 +49,4 @@ define(['text!html/dashboard/gamelist.html',
 
       }])
 
-})
+});

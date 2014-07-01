@@ -40,13 +40,14 @@ module.exports = function(io, mongoose) {
     client.on('player cancel', onPlayerCancel );
     client.on('start game', onStartGame);  
     client.on('vote player', onVotePlayer);
-//    client.on ('kill player', onKillPlayer);
-    client.on('sleep', onSleep); 
+    client.on('sleep', onSleep);
     client.on('kill village', onNightAction);
     client.on('save village', onNightAction);
     client.on('inspect village', onNightAction);
     client.on('hook village', onNightAction);
 
+    client.on('day chat', onDayChat);
+    client.on('night chat', onNightChat);
 
     function onNewPlayer(data) {
       User.find({userName: data.userName}, function (err, user) {
@@ -200,6 +201,7 @@ module.exports = function(io, mongoose) {
           GameProcess[game._id].votePlayers[user.userName] = {};
           GameProcess[game._id].votePlayers[user.userName].vote = 0;
           GameProcess[game._id].votePlayers[user.userName].character = characterList[count];
+
           count +=1;
           user.save();
         }
@@ -350,6 +352,20 @@ module.exports = function(io, mongoose) {
     function onSleep(data) {
       io.sockets.in(data.gameID).emit('sleep', {status: 'success', userName: data.userName});      
     }
+
+    function onDayChat(data) {
+      console.log(data);
+      console.log(io.rooms)
+      client.broadcast.to(data.gameID).emit('day chat', {userName: data.userName, msg: data.msg});
+    }
+
+    function onNightChat(data) {
+      var playerList = GameProcess[data.gameID].votePlayers;
+
+      console.log(playerList);
+    }
+
+
 
 
   }

@@ -5,7 +5,8 @@ define(['angular',
   './controllers/doctorCtrl',
   './controllers/policeCtrl',
   './controllers/hookerCtrl',
-  './controllers/gameLogCtrl'
+  './controllers/gameLogCtrl',
+  './controllers/chatRoomCtrl'
 
   ], function (angular) {
   'use strict';
@@ -17,6 +18,7 @@ define(['angular',
     'game.controllers.doctorCtrl',
     'game.controllers.policeCtrl',
     'game.controllers.hookerCtrl',
-    'game.controllers.gameLogCtrl'
+    'game.controllers.gameLogCtrl',
+    'game.controllers.chatRoomCtrl'
     ]) 
 })

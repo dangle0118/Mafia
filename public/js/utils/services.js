@@ -81,6 +81,8 @@ define(["angular", "btford.socket-io"], function (angular) {
       return {
         init: function (playerList, playerAmount) {
           this.gameLog = [];
+          this.dayChatLog = [];
+          this.nightChatLog = [];
           this.playerColor = putPlayer(playerList);
           this.playerAmount = playerAmount;
         },
@@ -112,6 +114,20 @@ define(["angular", "btford.socket-io"], function (angular) {
               break;
           }
           console.log(this.gameLog, this.playerColor, this.playerAmount);
+        },
+        addDayChat: function(userName, msg) {
+          var aLog = {};
+          aLog['color'] = this.playerColor[userName];
+          aLog['player'] = userName;
+          aLog['content'] = msg;
+          this.dayChatLog.push(aLog);
+        },
+        addNightChat: function(userName, msg) {
+          var aLog = {};
+          aLog['color'] = this.playerColor[userName];
+          aLog['player'] = userName;
+          aLog['content'] = msg;
+          this.nightChatLog.push(aLog);
         }
       };
     })

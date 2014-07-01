@@ -1,4 +1,6 @@
-define(['text!html/game/mafia.html',
+define([
+  'text!html/utils/chatroom.html',
+  'text!html/game/mafia.html',
   'text!html/game/village.html',
   'text!html/game/police.html',
   'text!html/game/doctor.html',
@@ -6,7 +8,7 @@ define(['text!html/game/mafia.html',
   'text!html/game/ghost.html',
   'text!html/game/end.html',
   'text!html/game/gamelog.html',
-  'angular','ui-router'], function (mafiaTpl, villageTpl, policeTpl, doctorTpl, gameBoardTpl,ghostTpl, endGameTpl, gameLogTpl, angular) {
+  'angular','ui-router'], function (chatRoomTpl, mafiaTpl, villageTpl, policeTpl, doctorTpl, gameBoardTpl,ghostTpl, endGameTpl, gameLogTpl, angular) {
   'use strict';
 
   return angular.module('game.ui', ['ui.router'])
@@ -19,9 +21,13 @@ define(['text!html/game/mafia.html',
               'root3': {
                 template: gameLogTpl,
                 controller: "GameLogCtrl"
+              },
+              'root4@': {
+                template: chatRoomTpl,
+                controller: "ChatRoomCtrl"
               }
-            }
 
+            }
           })
 
           .state('game.day', {
