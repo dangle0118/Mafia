@@ -7,7 +7,7 @@ define(['angular'], function (angular) {
         $scope.gameProcess = gameProcess;
         console.log($scope.gameProcess)
         $scope.character = userProfile.userCharacter;        
-        $scope.isNight = false;
+
         $scope.choosePlayer = '';     
 
         function killPlayer(player, character) {
@@ -41,6 +41,7 @@ define(['angular'], function (angular) {
         function onWakeUp(ev, data) {
           gameProcess.day += 1;
           gameProcess.sleepAmount = 0;
+          gameProcess.isNight = false;
           $scope.$state.go('game.day');
         }
 
@@ -63,6 +64,7 @@ define(['angular'], function (angular) {
           gameProcess.sleepAmount += 1;
             console.log(gameProcess.sleepAmount);
           if (gameProcess.sleepAmount == gameProcess.gameCap) {
+            gameProcess.isNight = true;
             $scope.$state.go('game.'+userProfile.userCharacter);
             
           }

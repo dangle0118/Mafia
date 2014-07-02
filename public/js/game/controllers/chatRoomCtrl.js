@@ -6,7 +6,11 @@ define(['angular'], function (angular) {
       function ($scope, socket, gameProfile, gameProcess, userProfile, gameLog) {
         $scope.dayLog = gameLog.dayChatLog;
         $scope.nightLog = gameLog.nightChatLog;
-        $scope.isNight = gameProcess.isNight;
+        $scope.badSide = gameProfile.onMafiaSide(userProfile.userCharacter);
+        $scope.$watch(function () {return gameProcess.isNight}, function (newValue) {$scope.isNight = newValue; });
+
+
+
 
         socket.forward('day chat', $scope);
         $scope.$on('socket:day chat', onDayChat);

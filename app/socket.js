@@ -191,6 +191,7 @@ module.exports = function(io, mongoose) {
       GameProcess[game._id].currentSubmit = 0;
       GameProcess[game._id].votePlayers = {};
       GameProcess[game._id].voteAmount = 0;
+      GameProcess[game._id].badSide = {};
       count = 0;
 
       var promise = User.find({socket: {$in: playerList}}).exec();
@@ -201,6 +202,9 @@ module.exports = function(io, mongoose) {
           GameProcess[game._id].votePlayers[user.userName] = {};
           GameProcess[game._id].votePlayers[user.userName].vote = 0;
           GameProcess[game._id].votePlayers[user.userName].character = characterList[count];
+          if (GameProcess.onBadSide(characterList[count])) {
+            GameProcess[game._id].badSide[user.userName] = user.socket;
+          }
 
           count +=1;
           user.save();
@@ -362,7 +366,13 @@ module.exports = function(io, mongoose) {
     function onNightChat(data) {
       var playerList = GameProcess[data.gameID].votePlayers;
 
-      console.log(playerList);
+      for (var player in playerList) {
+        if (GameProcess[data.gameID].badSide.hasOwnProperty(player) && player !== data.userName) {
+          io.sockets.socket(GameProcess[data.gameID].badSide[player]).emit('night chat', {userName: data.userName, msg: data.msg})
+        }
+      }
+
+
     }
 
 
