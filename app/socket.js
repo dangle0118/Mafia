@@ -314,9 +314,7 @@ module.exports = function(io, mongoose) {
           } else {
             msg = 'is a village';
           }
-          io.sockets.in('/'+GameProcess[ID].role['police'].userName).emit('inspect village', {result: msg});
-          console.log(GameProcess[ID].role['police'].userName);
-          console.log(io);
+          io.sockets.in(GameProcess[ID].role['police'].userName).emit('inspect village', {result: msg});
         }
       }
 
@@ -329,11 +327,8 @@ module.exports = function(io, mongoose) {
     }
 
     function onNightAction(data) {
-      console.log(GameProcess[data.gameID]);
-      console.log(data);
       GameProcess[data.gameID].role[data.role] = {userName: data.userName, votePlayer: data.votePlayer};
       GameProcess[data.gameID].currentSubmit +=1;
-      console.log(GameProcess[data.gameID].currentSubmit + ' ' + GameProcess[data.gameID].amountRole)
       if (GameProcess[data.gameID].currentSubmit == GameProcess[data.gameID].amountRole) {
         var killList = executeAction(data.gameID);
         console.log(killList)
@@ -343,7 +338,6 @@ module.exports = function(io, mongoose) {
         GameProcess[data.gameID].currentSubmit = 0;
         GameProcess[data.gameID].voteAmount = 0;
         for (var player in killList) {
-          console.log('player in killlist ' + player)
           io.sockets.in(data.gameID).emit('kill player', {status: 'success', player: player, character: killList[player]});
           GameProcess[data.gameID].gameCap -=1;
           if (GameProcess[data.gameID].votePlayers[player].character != "village") {
@@ -358,8 +352,6 @@ module.exports = function(io, mongoose) {
     }
 
     function onDayChat(data) {
-      console.log(data);
-      console.log(io.rooms)
       client.broadcast.to(data.gameID).emit('day chat', {userName: data.userName, msg: data.msg});
     }
 

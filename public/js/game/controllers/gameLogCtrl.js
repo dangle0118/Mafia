@@ -4,10 +4,6 @@ define(['angular'], function (angular) {
   return angular.module('game.controllers.gameLogCtrl', [])
     .controller('GameLogCtrl', ['$scope', 'socket', 'gameProfile', 'userProfile', 'gameProcess', 'gameLog',
       function ($scope, socket, gameProfile, userProfile, gameProcess, gameLog) {
-        console.log(gameLog);
-
         $scope.gameLog = gameLog.gameLog;
-
-
       }])
 })

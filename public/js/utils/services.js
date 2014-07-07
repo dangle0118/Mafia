@@ -72,9 +72,9 @@ define(["angular", "btford.socket-io"], function (angular) {
     .factory("gameLog", function () {
 
       function putPlayer(playerList) {
-        var playerColor = {};
+        var playerColor = [];
         for (var i = 0; i < playerList.length; ++i) {
-          playerColor[playerList[i]] = i+1;
+          playerColor[i] = playerList[i];
         }
         return playerColor;
       }
@@ -91,25 +91,62 @@ define(["angular", "btford.socket-io"], function (angular) {
         },
         addPlayer: function (player) {
           this.playerAmount += 1;
-          this.playerColor[player] = this.playerAmount;
+          for (var i =0; i < this.playerAmount; ++i) {
+            if (!angular.isDefined(this.playerColor[i]) || this.playerColor[i] == null) {
+              this.playerColor[i] = player;
+            }
+          };
+        },
+        removePlayer: function (player) {
+          this.playerAmount -=1;
+          this.playerColor[this.getColor(player)] = null;
+        },
+        getColor: function (player) {
+          return this.playerColor.indexOf(player);
         },
         addLog: function (command, votePlayer, data) {
           var aLog = {};
           switch(command) {
             case 'vote':
-              aLog['color'] = this.playerColor[votePlayer];
+              aLog['color'] = this.getColor(votePlayer);
               aLog['content'] = data + ' voted ' + votePlayer;
               this.gameLog.push(aLog);
               break;
             case 'kill':
-              aLog['color'] = this.playerColor[votePlayer];
+              aLog['color'] = this.getColor(votePlayer);
               aLog['content'] = votePlayer + ' (' + data + ') has been killed';
               this.gameLog.push(aLog);
               break;
             case 'join':
               this.addPlayer(votePlayer);
-              aLog['color'] = this.playerColor[votePlayer];
+              aLog['color'] = this.getColor(votePlayer);
               aLog['content'] = votePlayer + ' has joined the game';
+              this.gameLog.push(aLog);
+              break;
+            case 'leave':
+              aLog['color'] = this.getColor(votePlayer);
+              aLog['content'] = votePlayer + ' has left the game';
+              this.gameLog.push(aLog);
+              this.removePlayer(votePlayer);
+              break;
+            case 'confirm':
+              aLog['color'] = this.getColor(votePlayer);
+              aLog['content'] = votePlayer + ' is ready';
+              this.gameLog.push(aLog);
+              break;
+            case 'cancel':
+              aLog['color'] = this.getColor(votePlayer);
+              aLog['content'] = votePlayer + ' is not ready';
+              this.gameLog.push(aLog);
+              break;
+            case 'sleep':
+              aLog['color'] = this.getColor(votePlayer);
+              aLog['content'] = votePlayer + ' is going to sleep';
+              this.gameLog.push(aLog);
+              break;
+            case 'general':
+              aLog['color'] = 'general';
+              aLog['content'] = data;
               this.gameLog.push(aLog);
               break;
           }

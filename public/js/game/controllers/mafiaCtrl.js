@@ -12,7 +12,6 @@ define(['angular'], function (angular) {
         }
 
         $scope.killVillage = function () {
-          console.log($scope.$parent.choosePlayer);
           if ($scope.$parent.choosePlayer !== '') {
             socket.emit('kill village', {role: userProfile.userCharacter, votePlayer: $scope.$parent.choosePlayer, gameID: gameProfile.gameID, userID: userProfile.userID, userName: userProfile.userName});
           };

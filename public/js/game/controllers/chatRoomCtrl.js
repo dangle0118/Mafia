@@ -15,7 +15,6 @@ define(['angular'], function (angular) {
         socket.forward('day chat', $scope);
         $scope.$on('socket:day chat', onDayChat);
         function onDayChat(ev, data) {
-          console.log(data);
           gameLog.addDayChat(data.userName, data.msg);
           console.log(gameLog);
         }
@@ -32,7 +31,6 @@ define(['angular'], function (angular) {
               socket.emit('day chat', {userName: userProfile.userName, gameID: gameProfile.gameID, msg: $scope.msg});
               gameLog.addDayChat(userProfile.userName, $scope.msg);
               $scope.msg = '';
-              console.log(gameLog);
             } else {
               socket.emit('night chat', {userName: userProfile.userName, gameID: gameProfile.gameID, msg: $scope.msg});
               gameLog.addNightChat(userProfile.userName, $scope.msg);

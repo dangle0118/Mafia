@@ -32,7 +32,6 @@ define(['angular'], function (angular) {
         function onPlayerLeave(ev, data) {
           gameProfile.removePlayer(data.userName);
           gameLog.addLog('leave', data.userName);
-
         }
 
         socket.forward('player confirm',$scope);
@@ -40,7 +39,6 @@ define(['angular'], function (angular) {
         function onPlayerConfirm(ev, data) {       
           $scope.NumberReady = $scope.NumberReady + 1;
           gameLog.addLog('confirm', data.userName);
-
         }
 
         socket.forward('player cancel',$scope);
@@ -48,7 +46,6 @@ define(['angular'], function (angular) {
         function onPlayerCancel(ev, data) {      
           $scope.NumberReady = $scope.NumberReady - 1;
           gameLog.addLog('cancel', data.userName);
-
         }
 
         socket.forward('start game', $scope);
@@ -59,34 +56,28 @@ define(['angular'], function (angular) {
             gameProcess.init(gameProfile.gameCap, gameProfile.getCurrentPlayers(), gameProfile.mafiaAmount);
             gameLog.refreshLog();
             $scope.$state.go('game.day');
-
           } else {
             console.log('cannot start game');
           }          
         }
 
-
-
         $scope.ready = function () {
-          console.log('erer');
           if ($scope.isReady == 1) {
             $scope.isReady = 0;
             $scope.NumberReady = $scope.NumberReady - 1;
             socket.emit('player cancel', {userName: userProfile.userName, gameID: gameProfile.gameID});
+            gameLog.addLog('cancel', userProfile.userName)
           } else {
             $scope.isReady = 1;
             $scope.NumberReady = $scope.NumberReady + 1;
-            socket.emit('player confirm', {userName: userProfile.userName, gameID: gameProfile.gameID});         
+            socket.emit('player confirm', {userName: userProfile.userName, gameID: gameProfile.gameID});
+            gameLog.addLog('confirm', userProfile.userName);
           }
-        }
-
+        };
         $scope.start = function () {
-
           if (gameProfile.isCreator && ($scope.NumberReady == gameProfile.gameCap)) {
             socket.emit('start game', {gameID: gameProfile.gameID});             
-            console.log('start');
           }
-        }
-
+        };
     }])
 })

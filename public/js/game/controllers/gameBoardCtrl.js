@@ -5,13 +5,11 @@ define(['angular'], function (angular) {
     .controller('GameBoardCtrl',['$scope','socket', 'gameProfile','userProfile', 'gameProcess','gameLog',
       function ($scope, socket, gameProfile, userProfile, gameProcess, gameLog) {
         $scope.gameProcess = gameProcess;
-        console.log($scope.gameProcess)
-        $scope.character = userProfile.userCharacter;        
+        $scope.character = userProfile.userCharacter;
 
         $scope.choosePlayer = '';     
 
         function killPlayer(player, character) {
-          console.log('kill ' + player + ' ' + character );
           gameLog.addLog('kill', player, character);
           gameProcess.gameCap -= 1 ;
           gameProcess.deadList.push(player);
@@ -22,7 +20,6 @@ define(['angular'], function (angular) {
             $scope.$state.go('dead');
           }
           //check end game condition
-          console.log(gameProcess);
           if ((gameProcess.gameCap - gameProcess.mafiaAmount <= gameProcess.mafiaAmount) || (gameProcess.mafiaAmount === 0)) {
             $scope.$state.go('end');
           }
@@ -60,13 +57,11 @@ define(['angular'], function (angular) {
         socket.forward('sleep', $scope);
         $scope.$on('socket:sleep', onSleep);
         function onSleep(ev, data) {
-          console.log(userProfile.userCharacter);
           gameProcess.sleepAmount += 1;
-            console.log(gameProcess.sleepAmount);
+          gameLog.addLog('sleep', data.userName);
           if (gameProcess.sleepAmount == gameProcess.gameCap) {
             gameProcess.isNight = true;
             $scope.$state.go('game.'+userProfile.userCharacter);
-            
           }
         }
 
