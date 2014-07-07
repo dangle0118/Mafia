@@ -16,7 +16,8 @@ define([
             url: '/dashboard',
             views: {
               'root1': {
-                template: headerTpl                                
+                template: headerTpl,
+                controller: 'HeaderCtrl'
               },
               'root2': {
                 template: dashboardTpl,
