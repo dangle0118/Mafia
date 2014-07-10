@@ -32,6 +32,10 @@ define([
           .state('waitingRoom', {
             url: '/waitingroom',
             views: {
+              'root1': {
+                template: headerTpl,
+                controller: 'HeaderCtrl'
+              },
               'root2': {
                 template: waitingRoomTpl,
                 controller: 'WaitingCtrl'

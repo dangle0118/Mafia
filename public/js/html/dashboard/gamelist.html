@@ -3,7 +3,7 @@
 </div>
 <div class="col-xs-12 nopadding game-list-box">
   <div class="list-group ">
-    <a class="list-group-item" ng-repeat="game in roomList">
+    <a class="list-group-item" ng-repeat="game in roomList" ng-click="$parent.gameChoose = game.gameID">
         {{game.roomName}}
         <span class="badge">{{game.gameCap}}</span>
     </a>
@@ -11,6 +11,6 @@
 </div>
 
 <div class="col-xs-12 apart text-center">
-  <button class="btn btn-default" type="submit">Join Game</button>
+  <button class="btn btn-default" type="submit" ng-click="joinGame(gameChoose)">Join Game</button>
 </div>
 </form>

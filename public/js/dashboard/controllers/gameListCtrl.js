@@ -25,10 +25,10 @@ define(['angular'], function (angular) {
           delete $scope.roomList[data.gameID];
         }
 
-        $scope.joinGame = function () {
-          socket.emit('join game', {userName: userProfile.userName, 
+        $scope.joinGame = function (gameID) {
+          socket.emit('join game', {userName: userProfile.userName,
                                     userID: userProfile.userID,
-                                    gameID: $scope.gameChoose});          
+                                    gameID: gameID});
         }
 
         socket.forward('join game', $scope);
@@ -41,6 +41,7 @@ define(['angular'], function (angular) {
           } else {
             console.log("cannot join game");
           };
-        }    
+        }
+
     }])
 })
