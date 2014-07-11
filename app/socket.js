@@ -25,9 +25,26 @@ module.exports = function(io, mongoose) {
     return false;
   }
 
+  var clientUtil = {
+    onLeaveGame: function (client, data) {
+      Game.find({_id: data.gameID}, function (err, gameInfo) {
+        if (!err) {
+          var game = gameInfo[0];
+          delete game.currentPlayers[game.currentPlayers.indexOf(data.userName)];
+          client.broadcast.to(game._id).emit('player leave', {userName: data.userName});
+          if (game.currentPlayers.length == 0) {
+            client.broadcast.emit('remove game', {gameID: game._id});
+            game.remove();
+          } else {
+            game.save();
+          };
+        };
+      });
+    }
+  };
 
-  
   io.sockets.on('connection', onConnection);
+  io.sockets.on('disconnect', onDisconnect);
 
   function onConnection(client) {
     console.log('new client connected: ' + client.id);
@@ -36,6 +53,7 @@ module.exports = function(io, mongoose) {
     client.on('create game', onCreateGame);
     client.on('get list', onGetList);
     client.on('join game', onJoinGame);
+    client.on('leave game', onLeaveGame);
     client.on('player confirm', onPlayerConfirm);
     client.on('player cancel', onPlayerCancel );
     client.on('start game', onStartGame);  
@@ -71,7 +89,7 @@ module.exports = function(io, mongoose) {
       });
     }
 	
-	function onCreateGame(data) {
+	  function onCreateGame(data) {
       Game.create({
         roomName : data.roomName,
         gameCap: data.gameCap,
@@ -143,6 +161,10 @@ module.exports = function(io, mongoose) {
           };      
         };
       });
+    }
+
+    function onLeaveGame(data) {
+      clientUtil.onLeaveGame(client, data);
     }
 
     function onPlayerConfirm(data) {
@@ -370,6 +392,16 @@ module.exports = function(io, mongoose) {
 
 
 
+  }
+
+  function onDisconnect(client) {
+    User.find({socket: client }, function (err, userInfo) {
+      if (!err) {
+        var user = userInfo[0];
+
+      };
+
+    });
   }
 
 }
