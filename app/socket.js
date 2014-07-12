@@ -1,7 +1,8 @@
 module.exports = function(io, mongoose) {
   var User = mongoose.model('user', {
   	userName: String,
-    inGame: Boolean,
+    inState: String,
+    inGame: String,
     socket: String
 
   });
@@ -30,7 +31,8 @@ module.exports = function(io, mongoose) {
       Game.find({_id: data.gameID}, function (err, gameInfo) {
         if (!err) {
           var game = gameInfo[0];
-          delete game.currentPlayers[game.currentPlayers.indexOf(data.userName)];
+          var pos = game.currentPlayers.indexOf(data.userName);
+          game.currentPlayers.splice(pos, 1);
           client.broadcast.to(game._id).emit('player leave', {userName: data.userName});
           if (game.currentPlayers.length == 0) {
             client.broadcast.emit('remove game', {gameID: game._id});
@@ -44,10 +46,11 @@ module.exports = function(io, mongoose) {
   };
 
   io.sockets.on('connection', onConnection);
-  io.sockets.on('disconnect', onDisconnect);
 
   function onConnection(client) {
     console.log('new client connected: ' + client.id);
+
+    client.on('disconnect', onDisconnect);
 
     client.on('new player', onNewPlayer);
     client.on('create game', onCreateGame);
@@ -74,7 +77,8 @@ module.exports = function(io, mongoose) {
       	} else {
       		User.create({
       			userName: data.userName,
-            inGame: false,
+            inState: 'LOBBY',
+            inGame: null,
             socket: client.id
       		}, function (err, user) {
       				if (err) {
@@ -110,7 +114,15 @@ module.exports = function(io, mongoose) {
             client.join(game._id);
 
             client.broadcast.emit('add game', {status: 'success', roomName: game.roomName,
-              gameID: game._id, gameCap: game.gameCap, currentPlayers: game.currentPlayers, mafiaAmount: game.mafiaAmount,} );
+              gameID: game._id, gameCap: game.gameCap, currentPlayers: game.currentPlayers, mafiaAmount: game.mafiaAmount} );
+            User.find({userName: data.userName}, function(err, userInfo) {
+              if (!err) {
+                var user = userInfo[0];
+                user.inState = 'WAITING';
+                user.inGame = game._id;
+                user.save();
+              }
+            });
           };
       });
 		
@@ -152,10 +164,17 @@ module.exports = function(io, mongoose) {
             client.emit('join game', {status: 'success', data: result});                    
             client.join(game._id);
             client.broadcast.to(game._id).emit('player join', {userName: data.userName});
-
             io.sockets.clients(game._id);
             game.save();
             client.join(data.userName);
+            User.find({userName: data.userName}, function(err, userInfo) {
+              if (!err) {
+                var user = userInfo[0];
+                user.inState = 'WAITING';
+                user.inGame = game._id;
+                user.save();
+              }
+            });
           } else {
             client.emit('join game', {status: 'fail', msg: "Room is fulled"});
           };      
@@ -284,16 +303,11 @@ module.exports = function(io, mongoose) {
 
       if (GameProcess[data.gameID].voteAmount == GameProcess[data.gameID].gameCap) {
         var player = getHighestVote(data.gameID);
-        console.log('vote ' + player)
-        console.log(GameProcess[data.gameID].votePlayers)
         if (!checkEqualVote(player, data.gameID)) {
           io.sockets.in(data.gameID).emit('kill player', {status: 'success', player: player, character: GameProcess[data.gameID].votePlayers[player].character});
           GameProcess[data.gameID].gameCap -=1;
           if (GameProcess[data.gameID].votePlayers[player].character != "village") {
-              console.log('here ' + player + " " + GameProcess[data.gameID].votePlayers[player].character);
               GameProcess[data.gameID].amountRole -=1;
-              console.log('just decrease ' + GameProcess[data.gameID].amountRole);
-              console.log(GameProcess[data.gameID].votePlayers)
           }
         }
       }
@@ -313,7 +327,6 @@ module.exports = function(io, mongoose) {
 
       if (GameProcess[ID].role.hasOwnProperty('mafia')) {
         for (var character in GameProcess[ID].role) {
-          console.log(character);
           if (GameProcess[ID].role[character].userName === GameProcess[ID].role['mafia'].votePlayer) {
             GameProcess[ID].role[character].userName = '';
             break;
@@ -353,7 +366,6 @@ module.exports = function(io, mongoose) {
       GameProcess[data.gameID].currentSubmit +=1;
       if (GameProcess[data.gameID].currentSubmit == GameProcess[data.gameID].amountRole) {
         var killList = executeAction(data.gameID);
-        console.log(killList)
         //broad cast wake up to all players
         io.sockets.in(data.gameID).emit('wake up', {status: 'wakeup'});
 
@@ -385,23 +397,25 @@ module.exports = function(io, mongoose) {
           io.sockets.socket(GameProcess[data.gameID].badSide[player]).emit('night chat', {userName: data.userName, msg: data.msg})
         }
       }
+    }
 
+    function onDisconnect() {
+      User.find({socket: client.id }, function (err, userInfo) {
+        if (!err) {
+          var user = userInfo[0];
+          if (user.inState !== 'LOBBY') {
+            clientUtil.onLeaveGame(client, {gameID: user.inGame, userName: user.userName});
+          };
+        };
 
+      });
     }
 
 
 
 
+
   }
 
-  function onDisconnect(client) {
-    User.find({socket: client }, function (err, userInfo) {
-      if (!err) {
-        var user = userInfo[0];
-
-      };
-
-    });
-  }
 
 }
