@@ -2,9 +2,15 @@
   <h4> Waiting room </h4>
 
 </div>
-<div class="col-xs-12 game-list-box well">
-	<h4> Current players: </h4>
-	<li ng-repeat="player in currentPlayers track by $index">{{player}}</li>
+<div class="col-xs-12 nopadding game-list-box well">
+  <div class="col-xs-12">
+    <h4> Current players: </h4>
+  </div>
+  <div class="col-xs-12 form-control" style="margin-bottom: 0" ng-repeat="player in currentPlayers" >
+    <span>{{player}}</span>
+    <span class="glyphicon glyphicon-ok pull-right" ng-show="$parent.readyList[player]"></span>
+  </div>
+
 </div>
 <div class="col-xs-12 apart-sm text-center">
   <button class="btn btn-default " type="button" ng-click="ready()">Ready</button>

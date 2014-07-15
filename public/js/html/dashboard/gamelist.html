@@ -1,12 +1,15 @@
-<div class="col-xs-12 input-space">
-  <h4>Game list:</h4>
-</div>
-<div class="col-xs-12 nopadding game-list-box">
-  <div class="list-group ">
-    <a class="list-group-item" ng-repeat="game in roomList" ng-click="$parent.gameChoose = game.gameID">
+
+<div class="col-xs-12 nopadding game-list-box well">
+  <div class="col-xs-12 input-space">
+    <h4>Game list:</h4>
+  </div>
+  <div class="col-xs-12 nopadding">
+    <div class="list-group ">
+      <a class="list-group-item " ng-repeat="game in roomList" ng-click="$parent.gameChoose = game.gameID">
         {{game.roomName}}
         <span class="badge">{{game.gameCap}}</span>
-    </a>
+      </a>
+    </div>
   </div>
 </div>
 
