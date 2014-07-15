@@ -1,6 +1,7 @@
 module.exports = function(io, mongoose) {
   var User = mongoose.model('user', {
   	userName: String,
+    password: String,
     inState: String,
     inGame: String,
     socket: String
@@ -77,6 +78,7 @@ module.exports = function(io, mongoose) {
       	} else {
       		User.create({
       			userName: data.userName,
+          //  password: data.password,
             inState: 'LOBBY',
             inGame: null,
             socket: client.id

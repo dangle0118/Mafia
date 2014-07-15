@@ -1,5 +1,6 @@
 define([
   'text!html/dashboard/header.html',
+  'text!html/game/waitingPlayer.html',
   'text!html/utils/chatroom.html',
   'text!html/game/mafia.html',
   'text!html/game/village.html',
@@ -9,7 +10,7 @@ define([
   'text!html/game/ghost.html',
   'text!html/game/end.html',
   'text!html/game/gamelog.html',
-  'angular','ui-router'], function (headerTpl, chatRoomTpl, mafiaTpl, villageTpl, policeTpl, doctorTpl, gameBoardTpl,ghostTpl, endGameTpl, gameLogTpl, angular) {
+  'angular','ui-router'], function (headerTpl,waitingPlayerTpl, chatRoomTpl, mafiaTpl, villageTpl, policeTpl, doctorTpl, gameBoardTpl,ghostTpl, endGameTpl, gameLogTpl, angular) {
   'use strict';
 
   return angular.module('game.ui', ['ui.router'])
@@ -31,22 +32,27 @@ define([
                 template: chatRoomTpl,
                 controller: "ChatRoomCtrl"
               }
-
             }
           })
 
           .state('game.day', {
             url: '/day',
             views: {
-
-              'root2@': {
+             'root2@': {
                 template: gameBoardTpl,
                 controller: "GameBoardCtrl"
               }
-                          
             }
           })
+          .state('game.waitingPlayer', {
+            url: '/waiting',
+            views: {
+              'root2@': {
+                template: waitingPlayerTpl
+              }
+            }
 
+          })
           .state('game.village', {
             url: '/village',
             parent: 'game.day',
@@ -103,8 +109,6 @@ define([
               }
             }
           })
-
-          
 
       }])
 
