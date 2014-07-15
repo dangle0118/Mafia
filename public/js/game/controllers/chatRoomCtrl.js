@@ -9,9 +9,6 @@ define(['angular'], function (angular) {
         $scope.badSide = gameProfile.onMafiaSide(userProfile.userCharacter);
         $scope.$watch(function () {return gameProcess.isNight}, function (newValue) {$scope.isNight = newValue; });
 
-
-
-
         socket.forward('day chat', $scope);
         $scope.$on('socket:day chat', onDayChat);
         function onDayChat(ev, data) {

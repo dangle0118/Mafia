@@ -1,25 +1,24 @@
 
-
-You are {{character}}<br/>
-
-<h4 ng-show='!isNight'>Day {{day}}</h4>
-<h4 ng-show='isNight'>Night {{day}}</h4>
-
-{{gameProcess}}
-
-<div class="" style="margin-top:10px" ng-repeat="player in gameProcess.playerList" >
-  <label class="radio" >
-    <input type="radio" name="player" value="{{player}}" ng-model="$parent.choosePlayer" ng-disabled="isDead(player)"/> 
-    {{isDead(player)}}
-      {{player}}
-  </label><br/>
-  
+<div class="col-xs-12">
+  You are {{character}}<br/>
 </div>
-<div ui-view="CharacterAction">
-	<button type="button" ng-click="goSleep()">Sleep</button>
-	<button type="button" ng-click="votePlayer()">
-    Vote
-  </button>
 
+<div class="col-xs-12 well nopadding ">
+  <div class="col-xs-12">
+    <h4>Choose a player:</h4>
+  </div>
+  <div class="col-xs-12 nopadding">
+    <div class="list-group ">
+      <a href="" class="list-group-item noborder" ng-repeat="player in gameProcess.playerList" ng-click="$parent.choosePlayer=player" ng-disabled="isDead(player)">
+        {{player}}
+      </a>
+    </div>
+  </div>
+</div>
+<div class="col-xs-12 text-center">
+  <div ui-view="CharacterAction">
+    <button class="btn btn-default" type="button" ng-click="goSleep()">Sleep</button>
+    <button class="btn btn-default" type="button" ng-click="votePlayer()">Vote</button>
+  </div>
 </div>
 
