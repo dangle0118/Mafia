@@ -1,46 +1,56 @@
-define(["text!html/login.html", "angular", "ui-router"], function (loginHtml, angular) {
-  "use strict";
+define(['text!html/login.html', 'angular', 'ui-router'], function (loginHtml, angular) {
+  'use strict';
 
-  return angular.module("login", ["ui.router"])
-    .config(["$stateProvider", "$urlRouterProvider",
+  return angular.module('login', ['ui.router'])
+    .config(['$stateProvider', '$urlRouterProvider',
       function ($stateProvider, $urlRouterProvider) {
-        $urlRouterProvider.otherwise("/login");
+        $urlRouterProvider.otherwise('/login');
         $stateProvider
-          .state("login", {
-            url: "/login",
+          .state('login', {
+            url: '/login',
             views: {
-              "root1": {
+              'root1': {
                 template: loginHtml,
-                controller: "LoginCtrl"
+                controller: 'LoginCtrl'
               }
             }
           })
       }])
 
-    .run(["$rootScope", "$state", "$stateParams", "socket", 
-      function ($rootScope, $state, $stateParams, socket) {
+    .run(['$rootScope', '$state', '$stateParams',  '$location', 'userProfile',
+      function ($rootScope, $state, $stateParams, $location, userProfile) {
         $rootScope.$state = $state;
-        $rootScope.$stateParams = $stateParams;       
+        $rootScope.$stateParams = $stateParams;
+
+        
+        $rootScope.$on('$stateChangeStart', function (event, next, current) {
+          console.log('route')
+          if (!userProfile.isLogged) {
+            $location.path('/login');
+          };
+        });
+        
     }])
 
-    .controller("LoginCtrl", ["$scope", "socket", "userProfile",
+    .controller('LoginCtrl', ['$scope', 'socket', 'userProfile',
       function($scope, socket, userProfile) {
-        $scope.userName = "";
+        $scope.userName = '';
  
-        socket.forward("new player", $scope);
-        $scope.$on("socket:new player", onNewPlayer);
+        socket.forward('new player', $scope);
+        $scope.$on('socket:new player', onNewPlayer);
         function onNewPlayer (ev, data) {
-          if (data.status === "success") {         
+          if (data.status === 'success') {         
             userProfile.userName = data.userName;
-            userProfile.userID = data.id; 
-            $scope.$state.go("dashboard");
+            userProfile.userID = data.id;
+            userProfile.isLogged = true;
+            $scope.$state.go('dashboard');
           } else {
-            $scope.userName = "";
+            $scope.userName = '';
           }
         }
 
         $scope.createPlayer = function () {
-          socket.emit("new player",{userName: $scope.userName});
+          socket.emit('new player',{userName: $scope.userName});
           
         };
       }]);

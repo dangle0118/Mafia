@@ -403,9 +403,9 @@ module.exports = function(io, mongoose) {
 
     function onDisconnect() {
       User.find({socket: client.id }, function (err, userInfo) {
-        if (!err) {
+        if (!err && userInfo.length > 0) {
           var user = userInfo[0];
-          if (user.inState !== 'LOBBY') {
+          if (user.inState && user.inState !== 'LOBBY') {
             clientUtil.onLeaveGame(client, {gameID: user.inGame, userName: user.userName});
           };
         };
