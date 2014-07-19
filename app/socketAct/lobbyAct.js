@@ -2,10 +2,29 @@ module.exports = function (io, client, db) {
 var User = db.User;
 var Game = db.Game;
 
+  client.on('login', onLogin);
   client.on('new player', onNewPlayer);
   client.on('create game', onCreateGame);
   client.on('get list', onGetList);
   client.on('join game', onJoinGame);
+
+  function onLogin(data) {
+    User.find({userName: data.userName}, function (err, user) {
+      if (user.length !== 0) {
+        var userInfo = user[0];
+        client.emit('login', {status: 'success',
+          data: {
+            id: userInfo._id,
+            userName: userInfo.userName,
+            password: userInfo.password,
+            inState: userInfo.inState,
+            inGame: userInfo.inGame
+          }});
+      } else {
+        client.emit('login', {status: 'error', msg: err});
+      }
+    });
+  }
 
   function onNewPlayer(data) {
     User.find({userName: data.userName}, function (err, user) {

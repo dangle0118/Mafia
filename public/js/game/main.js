@@ -12,6 +12,7 @@ define(['angular','./controllers', './ui'], function (angular) {
         function onPlayerLeave(ev, data) {
           gameProfile.removePlayer(data.userName);
           gameLog.addLog('leave', data.userName);
+          console.log('player leave');
           $rootScope.$state.go('game.waitingPlayer');
         }
 

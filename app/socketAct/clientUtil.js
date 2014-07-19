@@ -27,10 +27,10 @@ module.exports = function (io, client, db) {
     User.find({socket: client.id }, function (err, userInfo) {
       if (!err && userInfo.length > 0) {
         var user = userInfo[0];
-        if (user.inState && user.inState !== 'LOBBY') {
-          clientUtil.onLeaveGame(client, {gameID: user.inGame, userName: user.userName});
-        };
-      };
+        if (user.inState && user.inState !== 'WAITING') {
+          clientHelper.onLeaveGame(client, {gameID: user.inGame, userName: user.userName});
+        }
+      }
 
     });
   }

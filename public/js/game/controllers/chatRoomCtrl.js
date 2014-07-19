@@ -13,7 +13,6 @@ define(['angular'], function (angular) {
         $scope.$on('socket:day chat', onDayChat);
         function onDayChat(ev, data) {
           gameLog.addDayChat(data.userName, data.msg);
-          console.log(gameLog);
         }
 
         socket.forward('night chat', $scope);

@@ -43,15 +43,36 @@ define(['text!html/login.html', 'angular', 'ui-router'], function (loginHtml, an
             userProfile.userName = data.userName;
             userProfile.userID = data.id;
             userProfile.isLogged = true;
+            userProfile.inState = 'LOBBY';
+            userProfile.inGame = null;
             $scope.$state.go('dashboard');
           } else {
             $scope.userName = '';
           }
         }
 
+        socket.forward('login', $scope);
+        $scope.$on('socket:login', onLogin);
+        function onLogin(ev, data) {
+          if (data.status === 'success') {
+            userProfile.userName = data.userName;
+            userProfile.userID = data.id;
+            userProfile.isLogged = true;
+            userProfile.inState = data.inState;
+            userProfile.inGame = data.inGame;
+            $scope.$state.go('dashboard');
+          }
+        }
+
+
+
         $scope.createPlayer = function () {
-          socket.emit('new player',{userName: $scope.userName});
-          
+          socket.emit('new player',{userName: $scope.userName, password: $scope.password});
         };
+
+        $scope.login = function () {
+          socket.emit('login', {username: $scope.userName, password: $scope.password});
+        }
+
       }]);
 });
