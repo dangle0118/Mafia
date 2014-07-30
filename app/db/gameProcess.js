@@ -38,24 +38,59 @@ Process.init = function (game) {
     votePlayers: {},
     voteAmount: 0,
     mapPlayer: {},
-    badSide: {}
+    badSide: {},
+    deadList: [],
+    onBadSide: function (player) {
+      var character = this.mapPlayer[player];
+      return (onBadSide(character));
+    },
+    killPlayer: function (player) {
+      this.deadList.push(player);
+      this.gameCap -=1;
+      if (this.mapPlayer[player] != "village")
+        this.amountRole -=1;
+    }
+
   };
 
   var characterList = generateCharacters(game.gameCap, game.gameRoles);
   var count = 0;
-  for (var role = 0; role < characterList.length; ++role) {
-    GameProcess[game._id].role[characterList[role]] = {};
-    if (characterList[role] != 'village') {
-      count += 1;
-    }
-  }
-  GameProcess[game._id].amountRole = count;
 
   for (var i = 0; i < characterList.length; ++i) {
     GameProcess[game._id].mapPlayer[game.currentPlayers[i]] = characterList[i];
-  }
+    GameProcess[game._id].votePlayers[game.currentPlayers[i]] = 0;
 
+    GameProcess[game._id].role[characterList[i]] = {};
+    if (characterList[i] != 'village')
+      count += 1;
+  }
+  GameProcess[game._id].amountRole = count;
   return GameProcess[game._id];
+};
+
+Process.getGameProcess = function (Id) { return GameProcess[Id] };
+
+Process.updateProcess = function (Id, gameInfo) { GameProcess[Id] = gameInfo};
+
+Process.getHighestVote = function (Id) {
+  var highest = 0;
+  var name = '';
+  for (var player in GameProcess[Id].votePlayers) {
+    if (GameProcess[Id].votePlayers[player] > highest ) {
+      highest = GameProcess[Id].votePlayers[player];
+      name = player;
+    }
+  }
+  return name;
+};
+
+Process.checkEqualVote = function (Id, player) {
+  for (var temp in GameProcess[Id].votePlayers) {
+    if (GameProcess[Id].votePlayers.hasOwnProperty(temp))
+      if ((temp !== player) && (GameProcess[Id].votePlayers[temp] === GameProcess[Id].votePlayers[player]))
+        return true;
+  }
+  return false;
 }
 
 

@@ -1,9 +1,5 @@
 module.exports = function(io, db) {
 
-
-//  var InGameAct = require('socketAct/inGameAct')(db);
-
-
   var clientUtil = {
     onLeaveGame: function (client, data) {
       Game.find({_id: data.gameID}, function (err, gameInfo) {
@@ -32,20 +28,9 @@ module.exports = function(io, db) {
     require('../app/socketAct/waitingAct')(io, client, db);
     require('../app/socketAct/inGameAct')(io, client, db);
 
-
     client.on('disconnect', onDisconnect);
-
-
-
-
     client.on('day chat', onDayChat);
     client.on('night chat', onNightChat);
-
-
-
-
-
-
 
     function onDayChat(data) {
       client.broadcast.to(data.gameID).emit('day chat', {userName: data.userName, msg: data.msg});
