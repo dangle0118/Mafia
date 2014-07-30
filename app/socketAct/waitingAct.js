@@ -1,16 +1,15 @@
 module.exports = function (io, client, db) {
-  var User = db.User;
   var Game = db.Game;
   var GameProcess = db.GameProcess;
 
 
-  client.on('leave game', onLeaveGame);
+  client.on('leave game', onLeaveRoom);
   client.on('player confirm', onPlayerConfirm);
   client.on('player cancel', onPlayerCancel );
   client.on('start game', onStartGame);
 
-  function onLeaveGame(data) {
-    clientUtil.onLeaveGame(client, data);
+  function onLeaveRoom(data) {
+    clientUtil.onLeaveRoom(client, data);
   }
 
   function onPlayerConfirm(data) {
