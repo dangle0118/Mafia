@@ -1,7 +1,7 @@
 module.exports = function (io, client, db) {
   var User = db.User;
   var GameProcess = db.GameProcess;
-  var clientHelper = require('../app/socketAct/clientHelper')(db);
+  var clientHelper = require('../socketAct/clientHelper')(db);
 
   client.on('day chat', onDayChat);
   client.on('night chat', onNightChat);
@@ -20,7 +20,7 @@ module.exports = function (io, client, db) {
     var playerList = gameInfo.mapPlayer;
 
     for (var player in playerList) {
-      if (playerList.hasOwnProperty(player) && gameInfo.onBadSide(player)) {
+      if (playerList.hasOwnProperty(player) && gameInfo.onBadSide(player) && player !== data.userName) {
         io.sockets.in(player).emit('night chat', {userName: data.userName, msg: data.msg})
       }
     }

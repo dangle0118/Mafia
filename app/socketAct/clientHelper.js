@@ -1,8 +1,6 @@
 module.exports = function (db) {
-  console.log('helper');
   var GameProcess = db.GameProcess;
   var Game = db.Game;
-
 
   function onLeaveRoom(client, data) {
     Game.find({_id: data.gameID}, function (err, gameInfo) {
@@ -18,14 +16,21 @@ module.exports = function (db) {
         } else {
           game.save();
         }
-      };
+      }
     });
   }
 
-  return {
-    onLeaveRoom: onLeaveRoom
-
+  function onEndGame(io, gameId, gameInfo) {
+    var result = gameInfo.isEndGame();
+    console.log(result);
+    if (result !== null) {
+      io.sockets.in(gameId).emit('end game',{status: result});
+    }
   }
 
+  return {
+    onLeaveRoom: onLeaveRoom,
+    onEndGame: onEndGame
+  }
 }
 

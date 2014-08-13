@@ -19,10 +19,6 @@ define(['angular'], function (angular) {
           if (player === userProfile.userName) {
             $scope.$state.go('dead');
           }
-          //check end game condition
-          if ((gameProcess.gameCap - gameProcess.mafiaAmount <= gameProcess.mafiaAmount) || (gameProcess.mafiaAmount === 0)) {
-            $scope.$state.go('end');
-          }
         }
 
         $scope.isDead = function(player) {

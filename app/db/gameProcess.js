@@ -38,7 +38,7 @@ Process.init = function (game) {
     votePlayers: {},
     voteAmount: 0,
     mapPlayer: {},
-    badSide: {},
+    mafiaNumber: 0,
     deadList: [],
     onBadSide: function (player) {
       var character = this.mapPlayer[player];
@@ -49,8 +49,29 @@ Process.init = function (game) {
       this.gameCap -=1;
       if (this.mapPlayer[player] != "village")
         this.amountRole -=1;
+      if (this.onBadSide(player)) {
+        this.mafiaNumber -= 1;
+      }
+    },
+    resetVote: function () {
+      for (var character in this.role) {
+        this.role[character].userName = '';
+        this.role[character].votePlayer = '';
+      }
+      for (var player in this.votePlayers) {
+        this.votePlayers[player] = 0;
+      }
+      this.currentSubmit = 0;
+      this.voteAmount = 0;
+    },
+    isEndGame: function () {
+      console.log(this.gameCap, this.mafiaNumber);
+      if (this.mafiaNumber == 0)
+        return "village win";
+      if (this.gameCap - this.mafiaNumber <= this.mafiaNumber)
+        return 'mafia win';
+      return null;
     }
-
   };
 
   var characterList = generateCharacters(game.gameCap, game.gameRoles);
@@ -63,6 +84,9 @@ Process.init = function (game) {
     GameProcess[game._id].role[characterList[i]] = {};
     if (characterList[i] != 'village')
       count += 1;
+    if (onBadSide(characterList[i])) {
+      GameProcess[game._id].mafiaNumber += 1;
+    }
   }
   GameProcess[game._id].amountRole = count;
   return GameProcess[game._id];

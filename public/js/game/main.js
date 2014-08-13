@@ -25,6 +25,14 @@ define(['angular','./controllers', './ui'], function (angular) {
           }
         }
 
+        socket.forward('end game', $rootScope);
+        $rootScope.$on('socket:end game', onEndGame);
+        function onEndGame(ev, data) {
+          console.log(data.status);
+          $rootScope.$state.go('end');
+        }
+
+
       }])
 
 })

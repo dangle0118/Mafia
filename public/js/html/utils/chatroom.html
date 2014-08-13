@@ -1,6 +1,6 @@
 <form ng-submit="sendMessage()">
-  <div class="col-xs-12 input-space well game-list-box" ng-show="isNight == null || (!isNight && badSide)">
-    <div disabled="{{isNight}}">
+  <div class="col-xs-12 input-space well game-list-box" ng-hide="isNight">
+    <div >
       <ul class="list-group">
         <li ng-repeat="log in dayLog">
           {{log.player}}: {{log.content}}

@@ -1,5 +1,6 @@
 module.exports = function (io, client, db) {
   var GameProcess = db.GameProcess;
+  var clientHelper = require('../socketAct/clientHelper')(db);
 
   client.on('vote player', onVotePlayer);
   client.on('sleep', onSleep);
@@ -22,12 +23,14 @@ module.exports = function (io, client, db) {
       if (!GameProcess.checkEqualVote(data.gameID, player)) {
         io.sockets.in(data.gameID).emit('kill player', {status: 'success', player: player, character: gameInfo.mapPlayer[player]});
         gameInfo.killPlayer(player);
+        clientHelper.onEndGame(io, data.gameID, gameInfo);
       }
     }
     //GameProcess.updateProcess(data.gameID, gameInfo);
   }
 
   function executeAction(gameInfo) {
+    console.log(gameInfo)
     var killList = [];
     if (gameInfo.role.hasOwnProperty('hooker')) {
       for (var character in gameInfo.role) {
@@ -69,7 +72,6 @@ module.exports = function (io, client, db) {
 
   function onNightAction(data) {
     var gameInfo = GameProcess.getGameProcess(data.gameID);
-
     gameInfo.role[data.role] = {userName: data.userName, votePlayer: data.votePlayer};
     gameInfo.currentSubmit +=1;
     if (gameInfo.currentSubmit == gameInfo.amountRole) {
@@ -84,6 +86,8 @@ module.exports = function (io, client, db) {
         io.sockets.in(data.gameID).emit('kill player', {status: 'success', player: player, character: gameInfo.mapPlayer[player]});
         gameInfo.killPlayer(player);
       }
+      clientHelper.onEndGame(io, data.gameID, gameInfo);
+      gameInfo.resetVote();
     }
   }
 
